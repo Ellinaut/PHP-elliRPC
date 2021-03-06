@@ -10,9 +10,8 @@ use Ellinaut\ElliRPC\Definition\PackageDefinitionInterface;
 interface PackageDefinitionFactoryInterface
 {
     /**
-     * @param string $name
      * @param array $input
      * @return PackageDefinitionInterface
      */
-    public function createDefinition(string $name, array $input): PackageDefinitionInterface;
+    public function createDefinition(array $input): PackageDefinitionInterface;
 }

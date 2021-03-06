@@ -33,15 +33,15 @@ class ProcedureDefinitionFactory implements ProcedureDefinitionFactoryInterface
     }
 
     /**
-     * @param string $name
      * @param array $input
      * @return ProcedureDefinitionInterface
      */
-    public function createDefinition(string $name, array $input): ProcedureDefinitionInterface
+    public function createDefinition(array $input): ProcedureDefinitionInterface
     {
         return new ProcedureDefinition(
-            $name,
+            $input['name'],
             $input['methods'],
+            $input['contentTypes'],
             $this->requestDefinitionFactory->createDefinition($input['request']),
             $this->dataDefinitionFactory->createDefinition($input['response'])
         );

@@ -43,11 +43,8 @@ class ArrayPackageDefinitionProvider implements PackageDefinitionProviderInterfa
     {
         if (!is_array($this->packageDefinitions)) {
             $this->packageDefinitions = [];
-            foreach ($this->packages as $packageName => $packageDefinition) {
-                $this->packageDefinitions[] = $this->packageDefinitionFactory->createDefinition(
-                    $packageName,
-                    $packageDefinition
-                );
+            foreach ($this->packages as $package) {
+                $this->packageDefinitions[] = $this->packageDefinitionFactory->createDefinition($package);
             }
         }
 

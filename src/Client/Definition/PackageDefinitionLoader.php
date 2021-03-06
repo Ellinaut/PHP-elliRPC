@@ -48,8 +48,8 @@ class PackageDefinitionLoader extends AbstractRemoteConnector implements Package
         $packages = $this->executeGetJson('/elliRPC/_packages.json')['packages'];
 
         $packageDefinitions = [];
-        foreach ($packages as $packageName => $packageDefinition) {
-            $packageDefinitions[] = $this->packageDefinitionFactory->createDefinition($packageName, $packageDefinition);
+        foreach ($packages as $package) {
+            $packageDefinitions[] = $this->packageDefinitionFactory->createDefinition($package);
         }
 
         return $packageDefinitions;

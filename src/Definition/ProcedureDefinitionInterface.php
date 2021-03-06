@@ -18,6 +18,11 @@ interface ProcedureDefinitionInterface
     public function getMethods(): array;
 
     /**
+     * @return string[]
+     */
+    public function getContentTypes(): array;
+
+    /**
      * @return RequestDefinitionInterface
      */
     public function getRequestDefinition(): RequestDefinitionInterface;

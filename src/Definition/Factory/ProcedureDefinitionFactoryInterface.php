@@ -10,9 +10,8 @@ use Ellinaut\ElliRPC\Definition\ProcedureDefinitionInterface;
 interface ProcedureDefinitionFactoryInterface
 {
     /**
-     * @param string $name
      * @param array $input
      * @return ProcedureDefinitionInterface
      */
-    public function createDefinition(string $name, array $input): ProcedureDefinitionInterface;
+    public function createDefinition(array $input): ProcedureDefinitionInterface;
 }

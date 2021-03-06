@@ -4,7 +4,7 @@ namespace Ellinaut\ElliRPC\Server;
 
 use Ellinaut\ElliRPC\Definition\Provider\PackageDefinitionProviderInterface;
 use Ellinaut\ElliRPC\Definition\Provider\SchemaDefinitionProviderInterface;
-use Ellinaut\ElliRPC\Server\Formatter\DefinitionFormatterInterface;
+use Ellinaut\ElliRPC\Server\Formatter\PackageDefinitionFormatterInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -24,15 +24,15 @@ class ElliRPCServer
     protected SchemaDefinitionProviderInterface $schemaDefinitionProvider;
 
     /**
-     * @var DefinitionFormatterInterface[]
+     * @var PackageDefinitionFormatterInterface[]
      */
     protected array $definitionFormatters = [];
 
     /**
      * @param string $format
-     * @param DefinitionFormatterInterface $formatter
+     * @param PackageDefinitionFormatterInterface $formatter
      */
-    public function addDefinitionFormatter(string $format, DefinitionFormatterInterface $formatter): void
+    public function addDefinitionFormatter(string $format, PackageDefinitionFormatterInterface $formatter): void
     {
         $this->definitionFormatters[$format] = $formatter;
     }

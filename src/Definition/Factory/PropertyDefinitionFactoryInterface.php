@@ -10,9 +10,8 @@ use Ellinaut\ElliRPC\Definition\PropertyDefinitionInterface;
 interface PropertyDefinitionFactoryInterface
 {
     /**
-     * @param string $name
      * @param array $input
      * @return PropertyDefinitionInterface
      */
-    public function createDefinition(string $name, array $input): PropertyDefinitionInterface;
+    public function createDefinition(array $input): PropertyDefinitionInterface;
 }

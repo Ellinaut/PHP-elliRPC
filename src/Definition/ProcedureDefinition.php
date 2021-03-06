@@ -18,6 +18,11 @@ class ProcedureDefinition implements ProcedureDefinitionInterface
     private array $methods;
 
     /**
+     * @var string[]
+     */
+    private array $contentTypes;
+
+    /**
      * @var RequestDefinitionInterface
      */
     private RequestDefinitionInterface $requestDefinition;
@@ -30,17 +35,20 @@ class ProcedureDefinition implements ProcedureDefinitionInterface
     /**
      * @param string $name
      * @param string[] $methods
+     * @param string[] $contentTypes
      * @param RequestDefinitionInterface $requestDefinition
      * @param DataDefinitionInterface|null $responseDataDefinition
      */
     public function __construct(
         string $name,
         array $methods,
+        array $contentTypes,
         RequestDefinitionInterface $requestDefinition,
         ?DataDefinitionInterface $responseDataDefinition
     ) {
         $this->name = $name;
         $this->methods = $methods;
+        $this->contentTypes = $contentTypes;
         $this->requestDefinition = $requestDefinition;
         $this->responseDataDefinition = $responseDataDefinition;
     }
@@ -60,6 +68,14 @@ class ProcedureDefinition implements ProcedureDefinitionInterface
     public function getMethods(): array
     {
         return $this->methods;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getContentTypes(): array
+    {
+        return $this->contentTypes;
     }
 
     /**

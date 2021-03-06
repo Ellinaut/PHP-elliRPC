@@ -24,14 +24,13 @@ class PropertyDefinitionFactory implements PropertyDefinitionFactoryInterface
     }
 
     /**
-     * @param string $name
      * @param array $input
      * @return PropertyDefinitionInterface
      */
-    public function createDefinition(string $name, array $input): PropertyDefinitionInterface
+    public function createDefinition(array $input): PropertyDefinitionInterface
     {
         return new PropertyDefinition(
-            $name,
+            $input['name'],
             $input['description'],
             $this->propertyTypeDefinitionFactory->createDefinition($input['type'])
         );

@@ -39,11 +39,8 @@ class SchemaDefinitionFactory implements SchemaDefinitionFactoryInterface
     public function createDefinition(array $input): SchemaDefinitionInterface
     {
         $propertyDefinitions = [];
-        foreach ($input['properties'] as $propertyName => $propertyDefinition) {
-            $propertyDefinitions[] = $this->propertyDefinitionFactory->createDefinition(
-                $propertyName,
-                $propertyDefinition
-            );
+        foreach ($input['properties'] as $property) {
+            $propertyDefinitions[] = $this->propertyDefinitionFactory->createDefinition($property);
         }
 
         return new SchemaDefinition(

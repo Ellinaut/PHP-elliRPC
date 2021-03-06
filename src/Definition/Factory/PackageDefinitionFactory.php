@@ -24,21 +24,17 @@ class PackageDefinitionFactory implements PackageDefinitionFactoryInterface
     }
 
     /**
-     * @param string $name
      * @param array $input
      * @return PackageDefinitionInterface
      */
-    public function createDefinition(string $name, array $input): PackageDefinitionInterface
+    public function createDefinition(array $input): PackageDefinitionInterface
     {
         $procedureDefinitions = [];
 
-        foreach ($input as $procedureName => $procedureDefinition) {
-            $procedureDefinitions[] = $this->procedureDefinitionFactory->createDefinition(
-                $procedureName,
-                $procedureDefinition
-            );
+        foreach ($input['procedures'] as $procedure) {
+            $procedureDefinitions[] = $this->procedureDefinitionFactory->createDefinition($procedure);
         }
 
-        return new PackageDefinition($name, $procedureDefinitions);
+        return new PackageDefinition($input['name'], $procedureDefinitions);
     }
 }
