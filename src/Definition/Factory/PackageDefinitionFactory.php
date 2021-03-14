@@ -35,6 +35,6 @@ class PackageDefinitionFactory implements PackageDefinitionFactoryInterface
             $procedureDefinitions[] = $this->procedureDefinitionFactory->createDefinition($procedure);
         }
 
-        return new PackageDefinition($input['name'], $procedureDefinitions);
+        return new PackageDefinition($input['name'], $input['description'] ?? null, $procedureDefinitions);
     }
 }

@@ -8,6 +8,7 @@ use Ellinaut\ElliRPC\Definition\Provider\SchemaDefinitionProviderInterface;
 use Ellinaut\ElliRPC\Definition\SchemaDefinitionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
 use Throwable;
 
@@ -31,11 +32,12 @@ class SchemaDefinitionLoader extends AbstractRemoteConnector implements SchemaDe
     public function __construct(
         RequestFactoryInterface $requestFactory,
         UriFactoryInterface $uriFactory,
+        StreamFactoryInterface $streamFactory,
         ClientInterface $client,
         SchemaDefinitionFactoryInterface $schemaDefinitionFactory,
         string $remoteApi
     ) {
-        parent::__construct($requestFactory, $uriFactory, $client, $remoteApi);
+        parent::__construct($requestFactory, $uriFactory, $streamFactory, $client, $remoteApi);
         $this->schemaDefinitionFactory = $schemaDefinitionFactory;
     }
 
@@ -46,8 +48,8 @@ class SchemaDefinitionLoader extends AbstractRemoteConnector implements SchemaDe
      */
     public function getSchemaDefinition(string $name): SchemaDefinitionInterface
     {
-        return $this->schemaDefinitionFactory->createDefinition(
-            $this->executeGetJson('/elliRPC/_schema/' . $name . '.json')
-        );
+        $request = $this->buildJsonRequest('GET', '/elliRPC/_schema/' . $name . '.json');
+
+        return $this->schemaDefinitionFactory->createDefinition($this->executeJsonRequest($request));
     }
 }

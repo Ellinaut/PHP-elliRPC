@@ -8,6 +8,7 @@ use Ellinaut\ElliRPC\Definition\PackageDefinitionInterface;
 use Ellinaut\ElliRPC\Definition\Provider\PackageDefinitionProviderInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
 use Throwable;
 
@@ -24,6 +25,7 @@ class PackageDefinitionLoader extends AbstractRemoteConnector implements Package
     /**
      * @param RequestFactoryInterface $requestFactory
      * @param UriFactoryInterface $uriFactory
+     * @param StreamFactoryInterface $streamFactory
      * @param ClientInterface $client
      * @param PackageDefinitionFactoryInterface $packageDefinitionFactory
      * @param string $remoteApi
@@ -31,11 +33,12 @@ class PackageDefinitionLoader extends AbstractRemoteConnector implements Package
     public function __construct(
         RequestFactoryInterface $requestFactory,
         UriFactoryInterface $uriFactory,
+        StreamFactoryInterface $streamFactory,
         ClientInterface $client,
         PackageDefinitionFactoryInterface $packageDefinitionFactory,
         string $remoteApi
     ) {
-        parent::__construct($requestFactory, $uriFactory, $client, $remoteApi);
+        parent::__construct($requestFactory, $uriFactory, $streamFactory, $client, $remoteApi);
         $this->packageDefinitionFactory = $packageDefinitionFactory;
     }
 
@@ -45,7 +48,9 @@ class PackageDefinitionLoader extends AbstractRemoteConnector implements Package
      */
     public function getPackageDefinitions(): array
     {
-        $packages = $this->executeGetJson('/elliRPC/_packages.json')['packages'];
+        $request = $this->buildJsonRequest('GET', '/elliRPC/_packages.json');
+
+        $packages = $this->executeJsonRequest($request)['packages'];
 
         $packageDefinitions = [];
         foreach ($packages as $package) {

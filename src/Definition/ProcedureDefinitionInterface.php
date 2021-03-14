@@ -13,6 +13,11 @@ interface ProcedureDefinitionInterface
     public function getName(): string;
 
     /**
+     * @return string|null
+     */
+    public function getDescription(): ?string;
+
+    /**
      * @return string[]
      */
     public function getMethods(): array;

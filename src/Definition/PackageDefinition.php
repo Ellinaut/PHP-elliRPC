@@ -13,20 +13,26 @@ class PackageDefinition implements PackageDefinitionInterface
     private string $name;
 
     /**
+     * @var string|null
+     */
+    private ?string $description;
+
+    /**
      * @var ProcedureDefinitionInterface[]
      */
     private array $procedureDefinitions;
 
     /**
      * @param string $name
+     * @param string|null $description
      * @param ProcedureDefinitionInterface[] $procedureDefinitions
      */
-    public function __construct(string $name, array $procedureDefinitions)
+    public function __construct(string $name, ?string $description, array $procedureDefinitions)
     {
         $this->name = $name;
+        $this->description = $description;
         $this->procedureDefinitions = $procedureDefinitions;
     }
-
 
     /**
      * @return string
@@ -34,6 +40,14 @@ class PackageDefinition implements PackageDefinitionInterface
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
     }
 
     /**

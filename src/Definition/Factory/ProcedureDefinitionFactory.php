@@ -40,6 +40,7 @@ class ProcedureDefinitionFactory implements ProcedureDefinitionFactoryInterface
     {
         return new ProcedureDefinition(
             $input['name'],
+            $input['description'] ?? null,
             $input['methods'],
             $input['contentTypes'],
             $this->requestDefinitionFactory->createDefinition($input['request']),
