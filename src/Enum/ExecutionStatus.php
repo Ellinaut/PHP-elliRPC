@@ -7,5 +7,7 @@ namespace Ellinaut\ElliRPC\Enum;
  */
 final class ExecutionStatus extends AbstractEnum
 {
-//    public const SUCCESS = 'success';
+    public const EXECUTED = 'executed';
+
+    public const FAILED = 'failed';
 }

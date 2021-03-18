@@ -16,7 +16,6 @@
     }
   },
   "require-dev": {
-    "psr/http-client": "^1.0",
     "psr/cache": "^1.0"
   },
   "require": {

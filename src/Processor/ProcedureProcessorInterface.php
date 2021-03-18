@@ -2,8 +2,8 @@
 
 namespace Ellinaut\ElliRPC\Processor;
 
-use Ellinaut\ElliRPC\Value\ProcedureInterface;
-use Ellinaut\ElliRPC\Value\ProcedureResultInterface;
+use Ellinaut\ElliRPC\DataTransfer\Procedure;
+use Ellinaut\ElliRPC\DataTransfer\ProcedureResult;
 
 /**
  * @author Philipp Marien
@@ -11,8 +11,8 @@ use Ellinaut\ElliRPC\Value\ProcedureResultInterface;
 interface ProcedureProcessorInterface
 {
     /**
-     * @param ProcedureInterface $procedure
-     * @return ProcedureResultInterface
+     * @param Procedure $procedure
+     * @return ProcedureResult
      */
-    public function process(ProcedureInterface $procedure): ProcedureResultInterface;
+    public function process(Procedure $procedure): ProcedureResult;
 }
