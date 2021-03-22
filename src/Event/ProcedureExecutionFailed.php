@@ -2,7 +2,7 @@
 
 namespace Ellinaut\ElliRPC\Event;
 
-use Ellinaut\ElliRPC\DataTransfer\Procedure;
+use Ellinaut\ElliRPC\DataTransfer\Workflow\Procedure;
 use Throwable;
 
 /**
@@ -11,6 +11,11 @@ use Throwable;
 class ProcedureExecutionFailed
 {
     /**
+     * @var string
+     */
+    private string $transactionId;
+
+    /**
      * @var Procedure
      */
     private Procedure $procedure;
@@ -18,16 +23,26 @@ class ProcedureExecutionFailed
     /**
      * @var Throwable
      */
-    private Throwable $throwable;
+    private Throwable $exception;
 
     /**
+     * @param string $transactionId
      * @param Procedure $procedure
-     * @param Throwable $throwable
+     * @param Throwable $exception
      */
-    public function __construct(Procedure $procedure, Throwable $throwable)
+    public function __construct(string $transactionId, Procedure $procedure, Throwable $exception)
     {
+        $this->transactionId = $transactionId;
         $this->procedure = $procedure;
-        $this->throwable = $throwable;
+        $this->exception = $exception;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTransactionId(): string
+    {
+        return $this->transactionId;
     }
 
     /**
@@ -41,8 +56,8 @@ class ProcedureExecutionFailed
     /**
      * @return Throwable
      */
-    public function getThrowable(): Throwable
+    public function getException(): Throwable
     {
-        return $this->throwable;
+        return $this->exception;
     }
 }

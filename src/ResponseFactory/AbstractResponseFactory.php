@@ -5,12 +5,12 @@ namespace Ellinaut\ElliRPC\ResponseFactory;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
-use Throwable;
+use Ellinaut\ElliRPC\ResponseFactory\ResponseFactoryInterface as RPCResponseFactory;
 
 /**
  * @author Philipp Marien
  */
-abstract class AbstractResponseFactory
+abstract class AbstractResponseFactory implements RPCResponseFactory
 {
     /**
      * @var ResponseFactoryInterface
@@ -33,27 +33,27 @@ abstract class AbstractResponseFactory
     }
 
     /**
-     * @param string $body
      * @param int $httpStatusCode
      * @return ResponseInterface
      */
-    protected function createResponseWithBody(string $body, int $httpStatusCode = 200): ResponseInterface
+    protected function createHttpResponse($httpStatusCode = 200): ResponseInterface
     {
-        return $this->responseFactory
-            ->createResponse($httpStatusCode)
-            ->withBody($this->streamFactory->createStream($body));
+        return $this->responseFactory->createResponse($httpStatusCode);
     }
 
     /**
-     * @param array $data
+     * @param string $body
+     * @param string $contentType
      * @param int $httpStatusCode
      * @return ResponseInterface
-     * @throws Throwable
      */
-    protected function createJsonResponse(array $data, int $httpStatusCode = 200): ResponseInterface
-    {
-        $response = $this->createResponseWithBody(json_encode($data, JSON_THROW_ON_ERROR), $httpStatusCode);
-
-        return $response->withHeader('Content-Type', 'application/json');
+    protected function createHttpResponseWithBody(
+        string $body,
+        string $contentType,
+        int $httpStatusCode = 200
+    ): ResponseInterface {
+        return $this->createHttpResponse($httpStatusCode)
+            ->withBody($this->streamFactory->createStream($body))
+            ->withHeader('Content-Type', $contentType);
     }
 }

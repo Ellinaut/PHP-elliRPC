@@ -2,52 +2,19 @@
 
 namespace Ellinaut\ElliRPC\Processor\Request;
 
-use Ellinaut\ElliRPC\DataTransfer\Procedure;
-use Ellinaut\ElliRPC\DataTransfer\Transaction;
-use Ellinaut\ElliRPC\Processor\ProcedureProcessorInterface;
-use Ellinaut\ElliRPC\Request\AbstractRequest;
-use Ellinaut\ElliRPC\Request\TransactionsExecutionRequest;
-use Ellinaut\ElliRPC\ResponseFactory\AbstractResponseFactory;
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
+use Ellinaut\ElliRPC\DataTransfer\Workflow\Procedure;
+use Ellinaut\ElliRPC\Exception\InvalidRequestProcessorException;
+use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\TransactionsExecutionRequest;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamFactoryInterface;
 use Throwable;
 
 /**
  * @author Philipp Marien
+ * @todo move responses to response factory
  */
-class TransactionExecutionProcessor extends AbstractResponseFactory
+class TransactionExecutionProcessor extends AbstractExecutionProcessor
 {
-    use TransactionProcessorTrait;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private EventDispatcherInterface $eventDispatcher;
-
-    /**
-     * @var ProcedureProcessorInterface
-     */
-    private ProcedureProcessorInterface $procedureProcessor;
-
-    /**
-     * @param ResponseFactoryInterface $responseFactory
-     * @param StreamFactoryInterface $streamFactory
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ProcedureProcessorInterface $procedureProcessor
-     */
-    public function __construct(
-        ResponseFactoryInterface $responseFactory,
-        StreamFactoryInterface $streamFactory,
-        EventDispatcherInterface $eventDispatcher,
-        ProcedureProcessorInterface $procedureProcessor
-    ) {
-        parent::__construct($responseFactory, $streamFactory);
-        $this->eventDispatcher = $eventDispatcher;
-        $this->procedureProcessor = $procedureProcessor;
-    }
-
     /**
      * @param AbstractRequest $request
      * @return ResponseInterface
@@ -56,32 +23,56 @@ class TransactionExecutionProcessor extends AbstractResponseFactory
     public function processRequest(AbstractRequest $request): ResponseInterface
     {
         if (!$request instanceof TransactionsExecutionRequest) {
-            //@todo exception
-            throw new \Exception();
+            throw new InvalidRequestProcessorException();
         }
 
-        $transactionResults = [];
-        foreach ($request->getTransactions() as $id => $procedures) {
-            $procedureObjects = [];
+        $transactions = [];
+        foreach ($request->getTransactions() as $transactionId => $procedures) {
+            $this->startTransaction($transactionId);
+
+            $procedureResults = [];
             foreach ($procedures as $procedure) {
-                $procedureObjects[] = new Procedure(
-                    $procedure['procedureId'],
-                    $procedure['package'],
-                    $procedure['procedure'],
-                    $procedure['data'],
-                    $procedure['pagination'],
-                    $procedure['sorting']
+                $procedureResults[] = $this->executeProcedure(
+                    $transactionId,
+                    new Procedure(
+                        $procedure['package'],
+                        $procedure['procedure'],
+                        $procedure['data'],
+                        $procedure['pagination'],
+                        $procedure['sorting']
+                    )
                 );
             }
 
-            $transactionResults[] = $this->executeTransaction(
-                $this->eventDispatcher,
-                $this->procedureProcessor,
-                new Transaction($id, $procedureObjects)
+            $this->finishTransaction(
+                $transactionId,
+                $this->isTransactionSuccessful($procedureResults)
             );
+
+            $transactions[$transactionId] = $procedureResults;
         }
 
-        //@todo build response data
-        return $this->createJsonResponse([]);
+        $data = [];
+        foreach ($transactions as $transactionId => $procedureResults) {
+            $formattedResults = [];
+            foreach ($procedureResults as $procedureResult) {
+                $formattedResults = [
+                    'package' => $procedureResult->getProcedure()->getPackageName(),
+                    'procedure' => $procedureResult->getProcedure()->getProcedureName(),
+                    'status' => $procedureResult->getStatus(),
+                    'response' => $procedureResult->getData(),
+                ];
+            }
+
+            $data[$transactionId] = [
+                'results' => $formattedResults,
+                'successful' => $this->isTransactionSuccessful($procedureResults)
+            ];
+        }
+
+        return $this->createResponseWithBody(
+            json_encode(['transactions' => $data], JSON_THROW_ON_ERROR),
+            'application/json'
+        );
     }
 }

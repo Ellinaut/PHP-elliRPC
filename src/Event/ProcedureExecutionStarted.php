@@ -2,7 +2,7 @@
 
 namespace Ellinaut\ElliRPC\Event;
 
-use Ellinaut\ElliRPC\DataTransfer\Procedure;
+use Ellinaut\ElliRPC\DataTransfer\Workflow\Procedure;
 
 /**
  * @author Philipp Marien
@@ -10,16 +10,31 @@ use Ellinaut\ElliRPC\DataTransfer\Procedure;
 class ProcedureExecutionStarted
 {
     /**
+     * @var string
+     */
+    private string $transactionId;
+
+    /**
      * @var Procedure
      */
     private Procedure $procedure;
 
     /**
+     * @param string $transactionId
      * @param Procedure $procedure
      */
-    public function __construct(Procedure $procedure)
+    public function __construct(string $transactionId, Procedure $procedure)
     {
+        $this->transactionId = $transactionId;
         $this->procedure = $procedure;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTransactionId(): string
+    {
+        return $this->transactionId;
     }
 
     /**

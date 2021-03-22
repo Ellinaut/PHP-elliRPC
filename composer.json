@@ -15,9 +15,6 @@
       "Ellinaut\\ElliRPC\\": "src"
     }
   },
-  "require-dev": {
-    "psr/cache": "^1.0"
-  },
   "require": {
     "php": ">=7.4",
     "ext-json": "*",

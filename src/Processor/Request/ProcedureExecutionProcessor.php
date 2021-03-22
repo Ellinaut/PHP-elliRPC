@@ -2,56 +2,22 @@
 
 namespace Ellinaut\ElliRPC\Processor\Request;
 
-use Ellinaut\ElliRPC\DataTransfer\Procedure;
-use Ellinaut\ElliRPC\DataTransfer\Transaction;
-use Ellinaut\ElliRPC\Exception\MissingContentTypeException;
-use Ellinaut\ElliRPC\Exception\UnsupportedContentTypeException;
-use Ellinaut\ElliRPC\Processor\ProcedureProcessorInterface;
-use Ellinaut\ElliRPC\Processor\RequestProcessorInterface;
-use Ellinaut\ElliRPC\Request\AbstractRequest;
-use Ellinaut\ElliRPC\Request\ProcedureExecutionRequest;
-use Ellinaut\ElliRPC\ResponseFactory\ProcedureExecutionResponseFactoryInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
+use Ellinaut\ElliRPC\DataTransfer\Response\Context\ProcedureResponseContext;
+use Ellinaut\ElliRPC\DataTransfer\Response\ProcedureResponse;
+use Ellinaut\ElliRPC\DataTransfer\Workflow\Procedure;
+use Ellinaut\ElliRPC\Exception\InvalidRequestProcessorException;
+use Ellinaut\ElliRPC\Exception\InvalidContentTypeHeaderException;
+use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\ProcedureExecutionRequest;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 /**
  * @author Philipp Marien
+ * @todo move responses to response factory
  */
-class ProcedureExecutionProcessor implements RequestProcessorInterface
+class ProcedureExecutionProcessor extends AbstractExecutionProcessor
 {
-    use TransactionProcessorTrait;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private EventDispatcherInterface $eventDispatcher;
-
-    /**
-     * @var ProcedureProcessorInterface
-     */
-    private ProcedureProcessorInterface $procedureProcessor;
-
-    /**
-     * @var ProcedureExecutionResponseFactoryInterface
-     */
-    private ProcedureExecutionResponseFactoryInterface $responseFactory;
-
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ProcedureProcessorInterface $procedureProcessor
-     * @param ProcedureExecutionResponseFactoryInterface $responseFactory
-     */
-    public function __construct(
-        EventDispatcherInterface $eventDispatcher,
-        ProcedureProcessorInterface $procedureProcessor,
-        ProcedureExecutionResponseFactoryInterface $responseFactory
-    ) {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->procedureProcessor = $procedureProcessor;
-        $this->responseFactory = $responseFactory;
-    }
-
     /**
      * @param AbstractRequest $request
      * @return ResponseInterface
@@ -60,31 +26,40 @@ class ProcedureExecutionProcessor implements RequestProcessorInterface
     public function processRequest(AbstractRequest $request): ResponseInterface
     {
         if (!$request instanceof ProcedureExecutionRequest) {
-            //@todo exception
-            throw new \Exception();
+            throw new InvalidRequestProcessorException();
         }
 
-        //@todo check content type extension for response and accept header matching the content type extension
+        $responseContext = new ProcedureResponseContext(
+            $request->getRequestedContentType(),
+            $request->getPackageName(),
+            $request->getProcedureName()
+        );
 
-        $procedureResult = $this->executeTransaction(
-            $this->eventDispatcher,
-            $this->procedureProcessor,
-            new Transaction(
-                'ID', //@todo
-                [
-                    new Procedure(
-                        'ID',//@todo
-                        $request->getPackageName(),
-                        $request->getProcedureName(),
-                        $this->parseProcedureDataFromRequest($request),
-                        $request->getQuery()['pagination'] ?? [],
-                        $request->getQuery()['sort'] ?? null
-                    )
-                ]
+        $this->throwExceptionOnUnsupportedResponseFormat($responseContext);
+
+        $transactionId = $this->generateTransactionId();
+        $this->startTransaction($transactionId);
+
+        $procedureResult = $this->executeProcedure(
+            $transactionId,
+            new Procedure(
+                $request->getPackageName(),
+                $request->getProcedureName(),
+                $this->parseProcedureDataFromRequest($request),
+                $request->getQuery()['pagination'] ?? [],
+                $request->getQuery()['sort'] ?? null
             )
-        )->getProcedureResults()[0];
+        );
 
-        return $this->responseFactory->createResponse($request, $procedureResult);
+        $this->finishTransaction($transactionId, $this->isTransactionSuccessful([$procedureResult]));
+
+
+        return $this->createResponse(
+            new ProcedureResponse(
+                $responseContext,
+                $procedureResult
+            )
+        );
     }
 
     /**
@@ -100,7 +75,7 @@ class ProcedureExecutionProcessor implements RequestProcessorInterface
 
         $contentTypeHeader = $request->getHeaderValue('Content-Type');
         if (empty($contentTypeHeader)) {
-            throw new MissingContentTypeException();
+            throw new InvalidContentTypeHeaderException();
         }
 
         $parsedData = [];
@@ -116,9 +91,17 @@ class ProcedureExecutionProcessor implements RequestProcessorInterface
                 //@todo
                 break;
             default:
-                throw new UnsupportedContentTypeException($contentTypeHeader);
+                throw new InvalidContentTypeHeaderException();
         }
 
         return $parsedData;
+    }
+
+    /**
+     * @return string
+     */
+    protected function generateTransactionId(): string
+    {
+        return sha1(uniqid('transaction', true));
     }
 }

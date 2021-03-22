@@ -5,7 +5,8 @@ namespace Ellinaut\ElliRPC\Definition\Provider;
 use Ellinaut\ElliRPC\Definition\ApplicationDefinitionInterface;
 use Ellinaut\ElliRPC\Definition\Factory\ApplicationDefinitionFactoryInterface;
 use Ellinaut\ElliRPC\Definition\SchemaDefinitionInterface;
-use Ellinaut\ElliRPC\Exception\MissingSchemaDefinitionException;
+use Ellinaut\ElliRPC\Exception\SchemaDefinitionNotFoundException;
+use Throwable;
 
 /**
  * @author Philipp Marien
@@ -64,7 +65,7 @@ class ArrayDefinitionProvider implements DefinitionProviderInterface
     /**
      * @param string $schemaName
      * @return SchemaDefinitionInterface
-     * @throws MissingSchemaDefinitionException
+     * @throws Throwable
      */
     public function getSchemaDefinition(string $schemaName): SchemaDefinitionInterface
     {
@@ -74,6 +75,6 @@ class ArrayDefinitionProvider implements DefinitionProviderInterface
             }
         }
 
-        throw new MissingSchemaDefinitionException($schemaName);
+        throw new SchemaDefinitionNotFoundException($schemaName);
     }
 }

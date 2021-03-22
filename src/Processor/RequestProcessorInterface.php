@@ -2,7 +2,7 @@
 
 namespace Ellinaut\ElliRPC\Processor;
 
-use Ellinaut\ElliRPC\Request\AbstractRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
 use Psr\Http\Message\ResponseInterface;
 
 /**

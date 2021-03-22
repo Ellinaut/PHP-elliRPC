@@ -3,6 +3,8 @@
 namespace Ellinaut\ElliRPC;
 
 use Ellinaut\ElliRPC\Event\RequestParsed;
+use Ellinaut\ElliRPC\Exception\MissingRequestException;
+use Ellinaut\ElliRPC\Exception\MissingResponseException;
 use Ellinaut\ElliRPC\RequestParser\RequestParserInterface;
 use Ellinaut\ElliRPC\Processor\ExceptionProcessorInterface;
 use Ellinaut\ElliRPC\Processor\RequestProcessorInterface;
@@ -63,7 +65,7 @@ class Server
         try {
             $rpcRequest = $this->requestParser->parseRequest($request);
             if (!$rpcRequest) {
-                //@todo exception
+                throw new MissingRequestException();
             }
 
             $this->eventDispatcher->dispatch(new RequestParsed($rpcRequest));
@@ -71,7 +73,7 @@ class Server
             $response = $this->requestProcessor->processRequest($rpcRequest);
 
             if (!$response) {
-                //@todo exception
+                throw new MissingResponseException();
             }
 
             return $response;

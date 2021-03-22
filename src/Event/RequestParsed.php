@@ -2,7 +2,7 @@
 
 namespace Ellinaut\ElliRPC\Event;
 
-use Ellinaut\ElliRPC\Request\AbstractRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
 
 /**
  * @author Philipp Marien

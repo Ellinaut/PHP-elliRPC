@@ -2,31 +2,31 @@
 
 namespace Ellinaut\ElliRPC\Event;
 
-use Ellinaut\ElliRPC\DataTransfer\TransactionResult;
-
 /**
  * @author Philipp Marien
  */
-class TransactionFinished
+class TransactionFinished extends AbstractTransactionEvent
 {
     /**
-     * @var TransactionResult
+     * @var bool
      */
-    private TransactionResult $transactionResult;
+    private bool $successful;
 
     /**
-     * @param TransactionResult $transactionResult
+     * @param string $transactionId
+     * @param bool $successful
      */
-    public function __construct(TransactionResult $transactionResult)
+    public function __construct(string $transactionId, bool $successful)
     {
-        $this->transactionResult = $transactionResult;
+        parent::__construct($transactionId);
+        $this->successful = $successful;
     }
 
     /**
-     * @return TransactionResult
+     * @return bool
      */
-    public function getTransactionResult(): TransactionResult
+    public function isSuccessful(): bool
     {
-        return $this->transactionResult;
+        return $this->successful;
     }
 }
