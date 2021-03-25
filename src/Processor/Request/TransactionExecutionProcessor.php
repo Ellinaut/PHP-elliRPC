@@ -2,6 +2,8 @@
 
 namespace Ellinaut\ElliRPC\Processor\Request;
 
+use Ellinaut\ElliRPC\DataTransfer\Response\Context\TransactionsResponseContext;
+use Ellinaut\ElliRPC\DataTransfer\Response\TransactionsResponse;
 use Ellinaut\ElliRPC\DataTransfer\Workflow\Procedure;
 use Ellinaut\ElliRPC\Exception\InvalidRequestProcessorException;
 use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
@@ -11,7 +13,6 @@ use Throwable;
 
 /**
  * @author Philipp Marien
- * @todo move responses to response factory
  */
 class TransactionExecutionProcessor extends AbstractExecutionProcessor
 {
@@ -25,6 +26,9 @@ class TransactionExecutionProcessor extends AbstractExecutionProcessor
         if (!$request instanceof TransactionsExecutionRequest) {
             throw new InvalidRequestProcessorException();
         }
+
+        $responseContext = new TransactionsResponseContext($request->getRequestedContentType());
+        $this->throwExceptionOnUnsupportedResponseFormat($responseContext);
 
         $transactions = [];
         foreach ($request->getTransactions() as $transactionId => $procedures) {
@@ -52,27 +56,11 @@ class TransactionExecutionProcessor extends AbstractExecutionProcessor
             $transactions[$transactionId] = $procedureResults;
         }
 
-        $data = [];
-        foreach ($transactions as $transactionId => $procedureResults) {
-            $formattedResults = [];
-            foreach ($procedureResults as $procedureResult) {
-                $formattedResults = [
-                    'package' => $procedureResult->getProcedure()->getPackageName(),
-                    'procedure' => $procedureResult->getProcedure()->getProcedureName(),
-                    'status' => $procedureResult->getStatus(),
-                    'response' => $procedureResult->getData(),
-                ];
-            }
-
-            $data[$transactionId] = [
-                'results' => $formattedResults,
-                'successful' => $this->isTransactionSuccessful($procedureResults)
-            ];
-        }
-
-        return $this->createResponseWithBody(
-            json_encode(['transactions' => $data], JSON_THROW_ON_ERROR),
-            'application/json'
+        return $this->createResponse(
+            new TransactionsResponse(
+                $responseContext,
+                $transactions
+            )
         );
     }
 }

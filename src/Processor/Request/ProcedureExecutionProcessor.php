@@ -14,7 +14,6 @@ use Throwable;
 
 /**
  * @author Philipp Marien
- * @todo move responses to response factory
  */
 class ProcedureExecutionProcessor extends AbstractExecutionProcessor
 {
@@ -53,6 +52,7 @@ class ProcedureExecutionProcessor extends AbstractExecutionProcessor
 
         $this->finishTransaction($transactionId, $this->isTransactionSuccessful([$procedureResult]));
 
+        //@todo different response on error; remove "status" form procedure?
 
         return $this->createResponse(
             new ProcedureResponse(
@@ -78,23 +78,19 @@ class ProcedureExecutionProcessor extends AbstractExecutionProcessor
             throw new InvalidContentTypeHeaderException();
         }
 
-        $parsedData = [];
         switch ($contentTypeHeader) {
             case 'application/json':
-            case 'application/ld+json':
-                $parsedData = json_decode($request->getBody(), true, 512, JSON_THROW_ON_ERROR);
-                break;
+                return json_decode($request->getBody(), true, 512, JSON_THROW_ON_ERROR);
             case 'application/x-www-form-urlencoded':
+                $parsedData = [];
                 parse_str($request->getBody(), $parsedData);
-                break;
+                return $parsedData;
             case'multipart/form-data':
                 //@todo
-                break;
-            default:
-                throw new InvalidContentTypeHeaderException();
+                return [];
         }
 
-        return $parsedData;
+        throw new InvalidContentTypeHeaderException();
     }
 
     /**
