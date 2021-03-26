@@ -50,7 +50,8 @@ class ProcedureExecutionProcessor extends AbstractExecutionProcessor
             )
         );
 
-        $this->finishTransaction($transactionId, $this->isTransactionSuccessful([$procedureResult]));
+        //@todo
+//        $this->finishTransaction($transactionId, $this->isTransactionSuccessful([$procedureResult]));
 
         //@todo different response on error; remove "status" form procedure?
 

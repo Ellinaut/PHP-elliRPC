@@ -3,7 +3,7 @@
 namespace Ellinaut\ElliRPC\Processor\Request;
 
 use Ellinaut\ElliRPC\DataTransfer\Response\AbstractFormatableResponse;
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\ResponseContext;
+use Ellinaut\ElliRPC\DataTransfer\Response\Context\AbstractResponseContext;
 use Ellinaut\ElliRPC\Exception\UnsupportedContentTypeException;
 use Ellinaut\ElliRPC\Processor\RequestProcessorInterface;
 use Ellinaut\ElliRPC\ResponseFactory\ResponseFactoryInterface;
@@ -28,10 +28,10 @@ abstract class AbstractRequestProcessor implements RequestProcessorInterface
     }
 
     /**
-     * @param ResponseContext $responseContext
+     * @param AbstractResponseContext $responseContext
      * @throws UnsupportedContentTypeException
      */
-    protected function throwExceptionOnUnsupportedResponseFormat(ResponseContext $responseContext): void
+    protected function throwExceptionOnUnsupportedResponseFormat(AbstractResponseContext $responseContext): void
     {
         if (!$this->responseFactory->supports($responseContext)) {
             throw new UnsupportedContentTypeException($responseContext->getContentType());

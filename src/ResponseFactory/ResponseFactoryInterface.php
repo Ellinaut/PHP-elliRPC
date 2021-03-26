@@ -3,7 +3,7 @@
 namespace Ellinaut\ElliRPC\ResponseFactory;
 
 use Ellinaut\ElliRPC\DataTransfer\Response\AbstractFormatableResponse;
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\ResponseContext;
+use Ellinaut\ElliRPC\DataTransfer\Response\Context\AbstractResponseContext;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -12,10 +12,10 @@ use Psr\Http\Message\ResponseInterface;
 interface ResponseFactoryInterface
 {
     /**
-     * @param ResponseContext $context
+     * @param AbstractResponseContext $context
      * @return bool
      */
-    public function supports(ResponseContext $context): bool;
+    public function supports(AbstractResponseContext $context): bool;
 
     /**
      * @param AbstractFormatableResponse $formatableResponse

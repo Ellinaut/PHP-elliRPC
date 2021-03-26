@@ -2,7 +2,7 @@
 
 namespace Ellinaut\ElliRPC\DataTransfer\Response;
 
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\ResponseContext;
+use Ellinaut\ElliRPC\DataTransfer\Response\Context\AbstractResponseContext;
 use Ellinaut\ElliRPC\Definition\PackageDefinitionInterface;
 
 /**
@@ -16,10 +16,10 @@ class PackageDefinitionsResponse extends AbstractFormatableResponse
     private array $content;
 
     /**
-     * @param ResponseContext $context
+     * @param AbstractResponseContext $context
      * @param PackageDefinitionInterface[] $content
      */
-    public function __construct(ResponseContext $context, array $content)
+    public function __construct(AbstractResponseContext $context, array $content)
     {
         parent::__construct($context);
         $this->content = $content;

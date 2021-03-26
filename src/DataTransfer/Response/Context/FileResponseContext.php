@@ -5,7 +5,7 @@ namespace Ellinaut\ElliRPC\DataTransfer\Response\Context;
 /**
  * @author Philipp Marien
  */
-class TransactionsResponseContext extends AbstractResponseContext
+class FileResponseContext extends AbstractResponseContext
 {
 
 }

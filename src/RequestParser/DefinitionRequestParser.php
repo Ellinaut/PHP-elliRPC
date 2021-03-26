@@ -2,10 +2,10 @@
 
 namespace Ellinaut\ElliRPC\RequestParser;
 
-use Ellinaut\ElliRPC\Request\AbstractRequest;
-use Ellinaut\ElliRPC\Request\DocumentationRequest;
-use Ellinaut\ElliRPC\Request\PackageDefinitionsRequest;
-use Ellinaut\ElliRPC\Request\SchemaDefinitionRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\DocumentationRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\PackageDefinitionsRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\SchemaDefinitionRequest;
 use Psr\Http\Message\RequestInterface;
 
 /**

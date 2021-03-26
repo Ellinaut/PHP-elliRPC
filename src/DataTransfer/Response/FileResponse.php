@@ -2,7 +2,7 @@
 
 namespace Ellinaut\ElliRPC\DataTransfer\Response;
 
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\ResponseContext;
+use Ellinaut\ElliRPC\DataTransfer\Response\Context\AbstractResponseContext;
 use Ellinaut\ElliRPC\DataTransfer\Workflow\File;
 
 /**
@@ -16,10 +16,10 @@ class FileResponse extends AbstractFormatableResponse
     private File $content;
 
     /**
-     * @param ResponseContext $context
+     * @param AbstractResponseContext $context
      * @param File $content
      */
-    public function __construct(ResponseContext $context, File $content)
+    public function __construct(AbstractResponseContext $context, File $content)
     {
         parent::__construct($context);
         $this->content = $content;

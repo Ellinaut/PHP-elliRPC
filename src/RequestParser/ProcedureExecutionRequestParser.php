@@ -2,8 +2,8 @@
 
 namespace Ellinaut\ElliRPC\RequestParser;
 
-use Ellinaut\ElliRPC\Request\AbstractRequest;
-use Ellinaut\ElliRPC\Request\ProcedureExecutionRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\ProcedureExecutionRequest;
 use Psr\Http\Message\RequestInterface;
 
 /**

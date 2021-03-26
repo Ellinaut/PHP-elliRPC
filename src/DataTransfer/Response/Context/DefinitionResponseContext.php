@@ -5,7 +5,7 @@ namespace Ellinaut\ElliRPC\DataTransfer\Response\Context;
 /**
  * @author Philipp Marien
  */
-class DefinitionResponseContext extends ResponseContext
+class DefinitionResponseContext extends AbstractResponseContext
 {
     public const ENDPOINT_DOCUMENTATION = 'documentation';
 

@@ -4,7 +4,7 @@ namespace Ellinaut\ElliRPC\ResponseFactory;
 
 use Ellinaut\ElliRPC\DataTransfer\Response\AbstractFormatableResponse;
 use Ellinaut\ElliRPC\DataTransfer\Response\Context\ProcedureResponseContext;
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\ResponseContext;
+use Ellinaut\ElliRPC\DataTransfer\Response\Context\AbstractResponseContext;
 use Ellinaut\ElliRPC\DataTransfer\Response\ProcedureResponse;
 use Ellinaut\ElliRPC\Exception\UnsupportedResponseException;
 use Psr\Http\Message\ResponseInterface;
@@ -13,13 +13,13 @@ use Throwable;
 /**
  * @author Philipp Marien
  */
-class ProcedureJsonResponseFactory extends AbstractResponseFactory
+class ProcedureExecutionJsonResponseFactory extends AbstractResponseFactory
 {
     /**
-     * @param ResponseContext $context
+     * @param AbstractResponseContext $context
      * @return bool
      */
-    public function supports(ResponseContext $context): bool
+    public function supports(AbstractResponseContext $context): bool
     {
         if (!$context instanceof ProcedureResponseContext) {
             return false;
@@ -39,9 +39,16 @@ class ProcedureJsonResponseFactory extends AbstractResponseFactory
             throw new UnsupportedResponseException();
         }
 
-        return $this->createHttpResponseWithBody(
-            json_encode($formatableResponse->getContent()->getData(), JSON_THROW_ON_ERROR),
-            'application/json'
-        );
+        $httpStatusCode = 200;
+        $data = $formatableResponse->getContent()->getData();
+        //@todo map error and change status code if $formatableResponse->getContent()->getException() !== null
+
+        $content = '';
+        if (is_array($data)) {
+            $content = json_encode($data, JSON_THROW_ON_ERROR);
+        }
+        //@todo accepted or no content status for empty content
+
+        return $this->createHttpResponseWithBody($content, 'application/json', $httpStatusCode);
     }
 }

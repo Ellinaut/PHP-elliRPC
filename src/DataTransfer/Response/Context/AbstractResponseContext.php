@@ -5,7 +5,7 @@ namespace Ellinaut\ElliRPC\DataTransfer\Response\Context;
 /**
  * @author Philipp Marien
  */
-abstract class ResponseContext
+abstract class AbstractResponseContext
 {
     /**
      * @var string

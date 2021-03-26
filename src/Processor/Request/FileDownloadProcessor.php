@@ -2,22 +2,20 @@
 
 namespace Ellinaut\ElliRPC\Processor\Request;
 
+use Ellinaut\ElliRPC\DataTransfer\Response\Context\FileResponseContext;
+use Ellinaut\ElliRPC\DataTransfer\Response\FileResponse;
 use Ellinaut\ElliRPC\Exception\InvalidRequestProcessorException;
 use Ellinaut\ElliRPC\FileHandler\FileHandlerInterface;
-use Ellinaut\ElliRPC\Processor\RequestProcessorInterface;
 use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
 use Ellinaut\ElliRPC\DataTransfer\Request\FileDownloadRequest;
-use Ellinaut\ElliRPC\ResponseFactory\AbstractResponseFactory;
-use Psr\Http\Message\ResponseFactoryInterface;
+use Ellinaut\ElliRPC\ResponseFactory\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamFactoryInterface;
 use Throwable;
 
 /**
  * @author Philipp Marien
- * @todo move responses to response factory
  */
-class FileDownloadProcessor extends AbstractResponseFactory implements RequestProcessorInterface
+class FileDownloadProcessor extends AbstractRequestProcessor
 {
     /**
      * @var FileHandlerInterface
@@ -26,15 +24,11 @@ class FileDownloadProcessor extends AbstractResponseFactory implements RequestPr
 
     /**
      * @param ResponseFactoryInterface $responseFactory
-     * @param StreamFactoryInterface $streamFactory
      * @param FileHandlerInterface $fileHandler
      */
-    public function __construct(
-        ResponseFactoryInterface $responseFactory,
-        StreamFactoryInterface $streamFactory,
-        FileHandlerInterface $fileHandler
-    ) {
-        parent::__construct($responseFactory, $streamFactory);
+    public function __construct(ResponseFactoryInterface $responseFactory, FileHandlerInterface $fileHandler)
+    {
+        parent::__construct($responseFactory);
         $this->fileHandler = $fileHandler;
     }
 
@@ -49,11 +43,11 @@ class FileDownloadProcessor extends AbstractResponseFactory implements RequestPr
             throw new InvalidRequestProcessorException();
         }
 
+        $responseContext = new FileResponseContext($request->getRequestedContentType());
+        $this->throwExceptionOnUnsupportedResponseFormat($responseContext);
+
         $file = $this->fileHandler->readFile($request->getPublicFileLocation());
 
-        return $this->createResponseWithBody(
-            $file->getContent(),
-            $file->getMimeType()
-        );
+        return $this->createResponse(new FileResponse($responseContext, $file));
     }
 }

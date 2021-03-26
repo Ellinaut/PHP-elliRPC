@@ -4,7 +4,7 @@ namespace Ellinaut\ElliRPC\ResponseFactory;
 
 use Ellinaut\ElliRPC\DataTransfer\Response\AbstractFormatableResponse;
 use Ellinaut\ElliRPC\DataTransfer\Response\Context\DefinitionResponseContext;
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\ResponseContext;
+use Ellinaut\ElliRPC\DataTransfer\Response\Context\AbstractResponseContext;
 use Ellinaut\ElliRPC\DataTransfer\Response\DocumentationResponse;
 use Ellinaut\ElliRPC\DataTransfer\Response\PackageDefinitionsResponse;
 use Ellinaut\ElliRPC\DataTransfer\Response\SchemaDefinitionResponse;
@@ -20,10 +20,10 @@ class DefinitionJsonResponseFactory extends AbstractResponseFactory
     use DefinitionMapperTrait;
 
     /**
-     * @param ResponseContext $context
+     * @param AbstractResponseContext $context
      * @return bool
      */
-    public function supports(ResponseContext $context): bool
+    public function supports(AbstractResponseContext $context): bool
     {
         if (!$context instanceof DefinitionResponseContext) {
             return false;

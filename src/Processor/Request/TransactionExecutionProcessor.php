@@ -48,10 +48,11 @@ class TransactionExecutionProcessor extends AbstractExecutionProcessor
                 );
             }
 
-            $this->finishTransaction(
-                $transactionId,
-                $this->isTransactionSuccessful($procedureResults)
-            );
+            //@todo
+//            $this->finishTransaction(
+//                $transactionId,
+//                $this->isTransactionSuccessful($procedureResults)
+//            );
 
             $transactions[$transactionId] = $procedureResults;
         }

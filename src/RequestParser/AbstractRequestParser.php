@@ -2,7 +2,9 @@
 
 namespace Ellinaut\ElliRPC\RequestParser;
 
+use Ellinaut\ElliRPC\Exception\EndpointNotFoundException;
 use Psr\Http\Message\UriInterface;
+use Throwable;
 
 /**
  * @author Philipp Marien
@@ -12,6 +14,7 @@ abstract class AbstractRequestParser implements RequestParserInterface
     /**
      * @param UriInterface $uri
      * @return string
+     * @throws Throwable
      */
     protected function parseRpcPathFromUri(UriInterface $uri): string
     {
@@ -28,7 +31,7 @@ abstract class AbstractRequestParser implements RequestParserInterface
         preg_match('/(elliRPC\/)(.*)/', $path, $matches);
 
         if (!array_key_exists(2, $matches)) {
-            //@todo exception for missing endpoint path
+            throw new EndpointNotFoundException();
         }
 
         return $matches[2];
@@ -37,6 +40,7 @@ abstract class AbstractRequestParser implements RequestParserInterface
     /**
      * @param UriInterface $uri
      * @return string
+     * @throws Throwable
      */
     protected function parseEndpointFromUri(UriInterface $uri): string
     {
@@ -49,6 +53,7 @@ abstract class AbstractRequestParser implements RequestParserInterface
     /**
      * @param UriInterface $uri
      * @return string|null
+     * @throws Throwable
      */
     protected function parseAdjustedPathFromUri(UriInterface $uri): ?string
     {

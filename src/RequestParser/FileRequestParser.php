@@ -2,10 +2,11 @@
 
 namespace Ellinaut\ElliRPC\RequestParser;
 
-use Ellinaut\ElliRPC\Request\AbstractRequest;
-use Ellinaut\ElliRPC\Request\FileDownloadRequest;
-use Ellinaut\ElliRPC\Request\FileUploadRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\FileDownloadRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\FileUploadRequest;
 use Psr\Http\Message\RequestInterface;
+use Throwable;
 
 /**
  * @author Philipp Marien
@@ -15,6 +16,7 @@ class FileRequestParser extends AbstractRequestParser
     /**
      * @param RequestInterface $request
      * @return AbstractRequest|null
+     * @throws Throwable
      */
     public function parseRequest(RequestInterface $request): ?AbstractRequest
     {
@@ -23,30 +25,19 @@ class FileRequestParser extends AbstractRequestParser
             return null;
         }
 
-        $parts = explode('/', $this->parseAdjustedPathFromUri($request->getUri()));
-
-        $fileName = array_pop($parts);
-        if (empty($fileName)) {
-            return null;
-        }
-
-        $directoryPath = implode('/', $parts);
-
         switch (strtoupper($request->getMethod())) {
             case 'GET':
                 return new FileDownloadRequest(
                     $request->getHeaders(),
                     $this->parseContentTypeExtensionFromUri($request->getUri()),
-                    $fileName,
-                    $directoryPath,
+                    $this->parseAdjustedPathFromUri($request->getUri())
                 );
             case 'POST':
                 return new FileUploadRequest(
                     $request->getHeaders(),
                     $this->parseContentTypeExtensionFromUri($request->getUri()),
-                    $fileName,
-                    $directoryPath,
-                    $request->getBody()->getContents(),
+                    $this->parseAdjustedPathFromUri($request->getUri()),
+                    $request->getBody()->getContents()
                 );
         }
 
