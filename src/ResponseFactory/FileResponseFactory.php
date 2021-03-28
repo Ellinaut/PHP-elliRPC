@@ -34,18 +34,22 @@ class FileResponseFactory extends AbstractResponseFactory
     public function createResponse(AbstractFormatableResponse $formatableResponse): ResponseInterface
     {
         if ($formatableResponse instanceof FileResponse) {
-
+            return $this->createHttpResponseWithBody(
+                $formatableResponse->getContent()->getContent(),
+                $formatableResponse->getContent()->getMimeType()
+            );
         }
 
         if ($formatableResponse instanceof FileReferenceResponse) {
-//        return $this->createResponse(201)->withHeader(
-//            'Content-Location',
-//            $file->getContentLocationValue()
-//        );
+            return $this->createHttpResponseWithBody(null, 'text/plain', 201)
+                ->withHeader(
+                    'Content-Location',
+                    $formatableResponse->getContent()->getContentLocationValue()
+                );
         }
 
         if ($formatableResponse instanceof FileDeletedResponse) {
-
+            return $this->createHttpResponseWithBody(null, 'Content-Location', 204);
         }
 
         throw new UnsupportedResponseException();

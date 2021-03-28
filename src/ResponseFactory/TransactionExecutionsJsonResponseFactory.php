@@ -52,8 +52,7 @@ class TransactionExecutionsJsonResponseFactory extends AbstractResponseFactory
             }
             $formattedTransactions[$transactionResult->getTransactionId()] = [
                 'successful' => $transactionResult->isSuccessful(),
-                'procedureResults' => $formattedResults,
-                'error' => null//@todo map exception
+                'procedureResults' => $formattedResults
             ];
         }
 

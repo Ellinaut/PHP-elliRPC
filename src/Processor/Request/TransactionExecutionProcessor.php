@@ -5,6 +5,8 @@ namespace Ellinaut\ElliRPC\Processor\Request;
 use Ellinaut\ElliRPC\DataTransfer\Response\Context\TransactionsResponseContext;
 use Ellinaut\ElliRPC\DataTransfer\Response\TransactionsResponse;
 use Ellinaut\ElliRPC\DataTransfer\Workflow\Procedure;
+use Ellinaut\ElliRPC\DataTransfer\Workflow\ProcedureResult;
+use Ellinaut\ElliRPC\DataTransfer\Workflow\TransactionResult;
 use Ellinaut\ElliRPC\Exception\InvalidRequestProcessorException;
 use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
 use Ellinaut\ElliRPC\DataTransfer\Request\TransactionsExecutionRequest;
@@ -36,26 +38,31 @@ class TransactionExecutionProcessor extends AbstractExecutionProcessor
 
             $procedureResults = [];
             foreach ($procedures as $procedure) {
-                $procedureResults[] = $this->executeProcedure(
-                    $transactionId,
-                    new Procedure(
-                        $procedure['package'],
-                        $procedure['procedure'],
-                        $procedure['data'],
-                        $procedure['pagination'],
-                        $procedure['sorting']
-                    )
+                $procedureObject = new Procedure(
+                    $procedure['package'],
+                    $procedure['procedure'],
+                    $procedure['data'],
+                    $procedure['pagination'],
+                    $procedure['sorting']
                 );
+
+                try {
+                    $procedureResults[] = $this->executeProcedure($transactionId, $procedureObject);
+                } catch (Throwable $exception) {
+                    $procedureResults[] = new ProcedureResult($procedureObject, null, $exception);
+                }
             }
 
-            //@todo
-//            $this->finishTransaction(
-//                $transactionId,
-//                $this->isTransactionSuccessful($procedureResults)
-//            );
+            $transactionResult = new TransactionResult(
+                $transactionId,
+                $procedureResults
+            );
 
-            $transactions[$transactionId] = $procedureResults;
+            $this->finishTransaction($transactionResult);
+
+            $transactions[] = $transactionResult;
         }
+
 
         return $this->createResponse(
             new TransactionsResponse(

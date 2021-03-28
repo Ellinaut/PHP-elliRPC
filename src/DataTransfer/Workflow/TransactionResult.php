@@ -2,8 +2,6 @@
 
 namespace Ellinaut\ElliRPC\DataTransfer\Workflow;
 
-use Throwable;
-
 /**
  * @author Philipp Marien
  */
@@ -20,20 +18,13 @@ class TransactionResult
     private array $procedureResults;
 
     /**
-     * @var Throwable|null
-     */
-    private ?Throwable $exception;
-
-    /**
      * @param string $transactionId
      * @param ProcedureResult[] $procedureResults
-     * @param Throwable|null $exception
      */
-    public function __construct(string $transactionId, array $procedureResults, ?Throwable $exception)
+    public function __construct(string $transactionId, array $procedureResults)
     {
         $this->transactionId = $transactionId;
         $this->procedureResults = $procedureResults;
-        $this->exception = $exception;
     }
 
     /**
@@ -63,14 +54,6 @@ class TransactionResult
             }
         }
 
-        return $this->getException() !== null;
-    }
-
-    /**
-     * @return Throwable|null
-     */
-    public function getException(): ?Throwable
-    {
-        return $this->exception;
+        return true;
     }
 }

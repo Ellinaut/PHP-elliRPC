@@ -5,6 +5,8 @@ namespace Ellinaut\ElliRPC\Processor\Request;
 use Ellinaut\ElliRPC\DataTransfer\Response\Context\ProcedureResponseContext;
 use Ellinaut\ElliRPC\DataTransfer\Response\ProcedureResponse;
 use Ellinaut\ElliRPC\DataTransfer\Workflow\Procedure;
+use Ellinaut\ElliRPC\DataTransfer\Workflow\ProcedureResult;
+use Ellinaut\ElliRPC\DataTransfer\Workflow\TransactionResult;
 use Ellinaut\ElliRPC\Exception\InvalidRequestProcessorException;
 use Ellinaut\ElliRPC\Exception\InvalidContentTypeHeaderException;
 use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
@@ -39,21 +41,21 @@ class ProcedureExecutionProcessor extends AbstractExecutionProcessor
         $transactionId = $this->generateTransactionId();
         $this->startTransaction($transactionId);
 
-        $procedureResult = $this->executeProcedure(
-            $transactionId,
-            new Procedure(
-                $request->getPackageName(),
-                $request->getProcedureName(),
-                $this->parseProcedureDataFromRequest($request),
-                $request->getQuery()['pagination'] ?? [],
-                $request->getQuery()['sort'] ?? null
-            )
+        $procedure = new Procedure(
+            $request->getPackageName(),
+            $request->getProcedureName(),
+            $this->parseProcedureDataFromRequest($request),
+            $request->getQuery()['pagination'] ?? [],
+            $request->getQuery()['sort'] ?? null
         );
 
-        //@todo
-//        $this->finishTransaction($transactionId, $this->isTransactionSuccessful([$procedureResult]));
+        try {
+            $procedureResult = $this->executeProcedure($transactionId, $procedure);
+        } catch (Throwable $exception) {
+            $procedureResult = new ProcedureResult($procedure, null, $exception);
+        }
 
-        //@todo different response on error; remove "status" form procedure?
+        $this->finishTransaction(new TransactionResult($transactionId, [$procedureResult]));
 
         return $this->createResponse(
             new ProcedureResponse(

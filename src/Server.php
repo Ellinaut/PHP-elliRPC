@@ -2,12 +2,14 @@
 
 namespace Ellinaut\ElliRPC;
 
+use Ellinaut\ElliRPC\DataTransfer\Response\Context\ExceptionResponseContext;
+use Ellinaut\ElliRPC\DataTransfer\Response\ExceptionResponse;
 use Ellinaut\ElliRPC\Event\RequestParsed;
 use Ellinaut\ElliRPC\Exception\MissingRequestException;
 use Ellinaut\ElliRPC\Exception\MissingResponseException;
 use Ellinaut\ElliRPC\RequestParser\RequestParserInterface;
-use Ellinaut\ElliRPC\Processor\ExceptionProcessorInterface;
 use Ellinaut\ElliRPC\Processor\RequestProcessorInterface;
+use Ellinaut\ElliRPC\ResponseFactory\ResponseFactoryInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -34,26 +36,26 @@ class Server
     private RequestProcessorInterface $requestProcessor;
 
     /**
-     * @var ExceptionProcessorInterface
+     * @var ResponseFactoryInterface
      */
-    private ExceptionProcessorInterface $exceptionProcessor;
+    private ResponseFactoryInterface $responseFactory;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param RequestParserInterface $requestParser
      * @param RequestProcessorInterface $requestProcessor
-     * @param ExceptionProcessorInterface $exceptionProcessor
+     * @param ResponseFactoryInterface $responseFactory
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         RequestParserInterface $requestParser,
         RequestProcessorInterface $requestProcessor,
-        ExceptionProcessorInterface $exceptionProcessor
+        ResponseFactoryInterface $responseFactory
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->requestParser = $requestParser;
         $this->requestProcessor = $requestProcessor;
-        $this->exceptionProcessor = $exceptionProcessor;
+        $this->responseFactory = $responseFactory;
     }
 
     /**
@@ -62,11 +64,14 @@ class Server
      */
     public function handleRequest(RequestInterface $request): ResponseInterface
     {
+        $contentType = 'json';
+
         try {
             $rpcRequest = $this->requestParser->parseRequest($request);
             if (!$rpcRequest) {
                 throw new MissingRequestException();
             }
+            $contentType = $rpcRequest->getRequestedContentType();
 
             $this->eventDispatcher->dispatch(new RequestParsed($rpcRequest));
 
@@ -78,7 +83,12 @@ class Server
 
             return $response;
         } catch (Throwable $throwable) {
-            return $this->exceptionProcessor->processException($throwable);
+            return $this->responseFactory->createResponse(
+                new ExceptionResponse(
+                    new ExceptionResponseContext($contentType),
+                    $throwable
+                )
+            );
         }
     }
 }
