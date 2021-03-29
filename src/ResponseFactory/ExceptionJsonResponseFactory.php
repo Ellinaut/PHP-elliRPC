@@ -3,9 +3,10 @@
 namespace Ellinaut\ElliRPC\ResponseFactory;
 
 use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
-use Ellinaut\ElliRPC\DataTransfer\FormattingContext\ProcedureExecutionContext;
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\ExceptionContext;
 use Ellinaut\ElliRPC\DataTransfer\Response\AbstractFormatableResponse;
-use Ellinaut\ElliRPC\DataTransfer\Response\ProcedureExecutionResponse;
+use Ellinaut\ElliRPC\DataTransfer\Response\ExceptionResponse;
+use Ellinaut\ElliRPC\Exception\StatusProvidingExceptionInterface;
 use Ellinaut\ElliRPC\Exception\UnsupportedResponseException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
@@ -13,19 +14,17 @@ use Throwable;
 /**
  * @author Philipp Marien
  */
-class ProcedureExecutionJsonResponseFactory extends AbstractResponseFactory
+class ExceptionJsonResponseFactory extends AbstractResponseFactory
 {
+    use ExceptionMapperTrait;
+
     /**
      * @param AbstractFormattingContext $context
      * @return bool
      */
     public function supports(AbstractFormattingContext $context): bool
     {
-        if (!$context instanceof ProcedureExecutionContext) {
-            return false;
-        }
-
-        return $context->getContentTypeExtension() === 'json';
+        return $context instanceof ExceptionContext && $context->getContentTypeExtension() === 'json';
     }
 
     /**
@@ -35,21 +34,24 @@ class ProcedureExecutionJsonResponseFactory extends AbstractResponseFactory
      */
     public function createResponse(AbstractFormatableResponse $formatableResponse): ResponseInterface
     {
-        if (!$formatableResponse instanceof ProcedureExecutionResponse) {
+        if (!$formatableResponse instanceof ExceptionResponse || !$this->supports($formatableResponse->getContext())) {
             throw new UnsupportedResponseException();
         }
 
-        $data = $formatableResponse->getContent()->getData();
+        $exception = $formatableResponse->getException();
 
-        $content = '';
-        if (is_array($data)) {
-            $content = json_encode($data, JSON_THROW_ON_ERROR);
+        $httpStatusCode = 500;
+        if ($exception instanceof StatusProvidingExceptionInterface) {
+            $httpStatusCode = $exception->getHttpStatusCode();
         }
 
         return $this->createHttpResponseWithBody(
-            $content,
+            json_encode(
+                $this->mapException($exception),
+                JSON_THROW_ON_ERROR
+            ),
             'application/json',
-            empty($content) ? 204 : 200
+            $httpStatusCode
         );
     }
 }

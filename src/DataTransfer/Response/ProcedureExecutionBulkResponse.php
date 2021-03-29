@@ -2,22 +2,22 @@
 
 namespace Ellinaut\ElliRPC\DataTransfer\Response;
 
+use Ellinaut\ElliRPC\DataTransfer\ExecutionResult;
 use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
-use Ellinaut\ElliRPC\Definition\PackageDefinitionInterface;
 
 /**
  * @author Philipp Marien
  */
-class PackageDefinitionsResponse extends AbstractFormatableResponse
+class ProcedureExecutionBulkResponse extends AbstractFormatableResponse
 {
     /**
-     * @var PackageDefinitionInterface[]
+     * @var ExecutionResult[]
      */
     private array $content;
 
     /**
      * @param AbstractFormattingContext $context
-     * @param PackageDefinitionInterface[] $content
+     * @param ExecutionResult[] $content
      */
     public function __construct(AbstractFormattingContext $context, array $content)
     {
@@ -26,7 +26,7 @@ class PackageDefinitionsResponse extends AbstractFormatableResponse
     }
 
     /**
-     * @return PackageDefinitionInterface[]
+     * @return ExecutionResult[]
      */
     public function getContent(): array
     {

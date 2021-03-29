@@ -2,33 +2,33 @@
 
 namespace Ellinaut\ElliRPC\DataTransfer\Response;
 
-use Ellinaut\ElliRPC\DataTransfer\FileReference;
 use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
+use Ellinaut\ElliRPC\DataTransfer\ProcedureBody;
 
 /**
  * @author Philipp Marien
  */
-class FileReferenceResponse extends AbstractFormatableResponse
+class ProcedureExecutionResponse extends AbstractFormatableResponse
 {
     /**
-     * @var FileReference
+     * @var ProcedureBody
      */
-    private FileReference $content;
+    private ProcedureBody $content;
 
     /**
      * @param AbstractFormattingContext $context
-     * @param FileReference $content
+     * @param ProcedureBody $content
      */
-    public function __construct(AbstractFormattingContext $context, FileReference $content)
+    public function __construct(AbstractFormattingContext $context, ProcedureBody $content)
     {
         parent::__construct($context);
         $this->content = $content;
     }
 
     /**
-     * @return FileReference
+     * @return ProcedureBody
      */
-    public function getContent(): FileReference
+    public function getContent(): ProcedureBody
     {
         return $this->content;
     }

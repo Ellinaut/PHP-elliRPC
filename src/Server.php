@@ -2,13 +2,14 @@
 
 namespace Ellinaut\ElliRPC;
 
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\ExceptionResponseContext;
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\ExceptionContext;
 use Ellinaut\ElliRPC\DataTransfer\Response\ExceptionResponse;
 use Ellinaut\ElliRPC\Event\RequestParsed;
 use Ellinaut\ElliRPC\Exception\MissingRequestException;
 use Ellinaut\ElliRPC\Exception\MissingResponseException;
+use Ellinaut\ElliRPC\Exception\UnsupportedResponseException;
 use Ellinaut\ElliRPC\RequestParser\RequestParserInterface;
-use Ellinaut\ElliRPC\Processor\RequestProcessorInterface;
+use Ellinaut\ElliRPC\RequestProcessor\RequestProcessorInterface;
 use Ellinaut\ElliRPC\ResponseFactory\ResponseFactoryInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\RequestInterface;
@@ -64,31 +65,34 @@ class Server
      */
     public function handleRequest(RequestInterface $request): ResponseInterface
     {
-        $contentType = 'json';
-
         try {
             $rpcRequest = $this->requestParser->parseRequest($request);
             if (!$rpcRequest) {
                 throw new MissingRequestException();
             }
-            $contentType = $rpcRequest->getRequestedContentType();
+
+            $contentType = $rpcRequest->getContext()->getContentTypeExtension();
+
+            if (!$this->responseFactory->supports($rpcRequest->getContext())) {
+                throw new UnsupportedResponseException();
+            }
 
             $this->eventDispatcher->dispatch(new RequestParsed($rpcRequest));
 
-            $response = $this->requestProcessor->processRequest($rpcRequest);
-
+            $response = $this->requestProcessor->process($rpcRequest);
             if (!$response) {
                 throw new MissingResponseException();
             }
-
-            return $response;
         } catch (Throwable $throwable) {
-            return $this->responseFactory->createResponse(
-                new ExceptionResponse(
-                    new ExceptionResponseContext($contentType),
-                    $throwable
-                )
+            $response = new ExceptionResponse(
+                new ExceptionContext(
+                    $contentType ?? 'json',
+                    $request->getHeader('Accept')
+                ),
+                $throwable
             );
         }
+
+        return $this->responseFactory->createResponse($response);
     }
 }

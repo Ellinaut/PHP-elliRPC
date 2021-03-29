@@ -5,7 +5,7 @@ namespace Ellinaut\ElliRPC\Event;
 /**
  * @author Philipp Marien
  */
-class TransactionFinished extends AbstractTransactionEvent
+class TransactionFailed extends AbstractTransactionEvent
 {
 
 }

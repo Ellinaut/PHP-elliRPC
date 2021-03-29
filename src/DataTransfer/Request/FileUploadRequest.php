@@ -2,6 +2,8 @@
 
 namespace Ellinaut\ElliRPC\DataTransfer\Request;
 
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
+
 /**
  * @author Philipp Marien
  */
@@ -13,18 +15,18 @@ class FileUploadRequest extends AbstractFileRequest
     private string $fileContent;
 
     /**
-     * @param string[][] $headers
-     * @param string $requestedContentType
+     * @param AbstractFormattingContext $context
      * @param string $publicFileLocation
      * @param string $fileContent
+     * @param string[][] $requestHeaders
      */
     public function __construct(
-        array $headers,
-        string $requestedContentType,
+        AbstractFormattingContext $context,
         string $publicFileLocation,
-        string $fileContent
+        string $fileContent,
+        array $requestHeaders = []
     ) {
-        parent::__construct($headers, $requestedContentType, $publicFileLocation);
+        parent::__construct($context, $publicFileLocation, $requestHeaders);
         $this->fileContent = $fileContent;
     }
 

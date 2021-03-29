@@ -2,8 +2,8 @@
 
 namespace Ellinaut\ElliRPC\ResponseFactory;
 
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
 use Ellinaut\ElliRPC\DataTransfer\Response\AbstractFormatableResponse;
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\AbstractResponseContext;
 use Ellinaut\ElliRPC\Exception\UnsupportedContentTypeException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -26,10 +26,10 @@ class ResponseFactoryRegistry implements ResponseFactoryInterface
     }
 
     /**
-     * @param AbstractResponseContext $context
+     * @param AbstractFormattingContext $context
      * @return bool
      */
-    public function supports(AbstractResponseContext $context): bool
+    public function supports(AbstractFormattingContext $context): bool
     {
         foreach ($this->responseFactories as $responseFactory) {
             if ($responseFactory->supports($context)) {
@@ -52,6 +52,6 @@ class ResponseFactoryRegistry implements ResponseFactoryInterface
             }
         }
 
-        throw new UnsupportedContentTypeException($formatableResponse->getContext()->getContentType());
+        throw new UnsupportedContentTypeException($formatableResponse->getContext()->getContentTypeExtension());
     }
 }

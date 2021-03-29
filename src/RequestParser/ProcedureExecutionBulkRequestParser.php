@@ -2,22 +2,22 @@
 
 namespace Ellinaut\ElliRPC\RequestParser;
 
-use Ellinaut\ElliRPC\DataTransfer\FormattingContext\TransactionExecutionContext;
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\ProcedureExecutionBulkContext;
 use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
-use Ellinaut\ElliRPC\DataTransfer\Request\TransactionExecutionRequest;
+use Ellinaut\ElliRPC\DataTransfer\Request\ProcedureExecutionBulkRequest;
 use Psr\Http\Message\RequestInterface;
 
 /**
  * @author Philipp Marien
  */
-class TransactionsExecutionRequestParser extends AbstractBulkRequestParser
+class ProcedureExecutionBulkRequestParser extends AbstractBulkRequestParser
 {
     /**
      * @return string
      */
     protected function getPath(): string
     {
-        return '@transaction';
+        return '@procedures';
     }
 
     /**
@@ -27,8 +27,8 @@ class TransactionsExecutionRequestParser extends AbstractBulkRequestParser
      */
     protected function createRequest(array $procedures, RequestInterface $request): AbstractRequest
     {
-        return new TransactionExecutionRequest(
-            new TransactionExecutionContext(
+        return new ProcedureExecutionBulkRequest(
+            new ProcedureExecutionBulkContext(
                 'json',
                 $request->getHeader('Accept')
             ),

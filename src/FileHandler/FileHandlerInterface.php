@@ -2,8 +2,8 @@
 
 namespace Ellinaut\ElliRPC\FileHandler;
 
-use Ellinaut\ElliRPC\DataTransfer\Workflow\File;
-use Ellinaut\ElliRPC\DataTransfer\Workflow\FileReference;
+use Ellinaut\ElliRPC\DataTransfer\File;
+use Ellinaut\ElliRPC\DataTransfer\FileReference;
 
 /**
  * @author Philipp Marien

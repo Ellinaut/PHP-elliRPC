@@ -2,6 +2,8 @@
 
 namespace Ellinaut\ElliRPC\RequestParser;
 
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\FileContext;
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\FileReferenceContext;
 use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
 use Ellinaut\ElliRPC\DataTransfer\Request\FileDownloadRequest;
 use Ellinaut\ElliRPC\DataTransfer\Request\FileUploadRequest;
@@ -28,16 +30,22 @@ class FileRequestParser extends AbstractRequestParser
         switch (strtoupper($request->getMethod())) {
             case 'GET':
                 return new FileDownloadRequest(
-                    $request->getHeaders(),
-                    $this->parseContentTypeExtensionFromUri($request->getUri()),
-                    $this->parseAdjustedPathFromUri($request->getUri())
+                    new FileReferenceContext(
+                        $this->parseContentTypeExtensionFromUri($request->getUri()),
+                        $request->getHeader('Accept')
+                    ),
+                    $this->parseAdjustedPathFromUri($request->getUri()),
+                    $request->getHeaders()
                 );
             case 'POST':
                 return new FileUploadRequest(
-                    $request->getHeaders(),
-                    $this->parseContentTypeExtensionFromUri($request->getUri()),
+                    new FileContext(
+                        $this->parseContentTypeExtensionFromUri($request->getUri()),
+                        $request->getHeader('Accept')
+                    ),
                     $this->parseAdjustedPathFromUri($request->getUri()),
-                    $request->getBody()->getContents()
+                    $request->getBody()->getContents(),
+                    $request->getHeaders()
                 );
         }
 

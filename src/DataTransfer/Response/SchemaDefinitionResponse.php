@@ -2,7 +2,7 @@
 
 namespace Ellinaut\ElliRPC\DataTransfer\Response;
 
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\AbstractResponseContext;
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
 use Ellinaut\ElliRPC\Definition\SchemaDefinitionInterface;
 
 /**
@@ -16,13 +16,11 @@ class SchemaDefinitionResponse extends AbstractFormatableResponse
     private SchemaDefinitionInterface $content;
 
     /**
-     * @param AbstractResponseContext $context
+     * @param AbstractFormattingContext $context
      * @param SchemaDefinitionInterface $content
      */
-    public function __construct(
-        AbstractResponseContext $context,
-        SchemaDefinitionInterface $content
-    ) {
+    public function __construct(AbstractFormattingContext $context, SchemaDefinitionInterface $content)
+    {
         parent::__construct($context);
         $this->content = $content;
     }

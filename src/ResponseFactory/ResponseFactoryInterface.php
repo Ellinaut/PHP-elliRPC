@@ -2,8 +2,8 @@
 
 namespace Ellinaut\ElliRPC\ResponseFactory;
 
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
 use Ellinaut\ElliRPC\DataTransfer\Response\AbstractFormatableResponse;
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\AbstractResponseContext;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -12,10 +12,10 @@ use Psr\Http\Message\ResponseInterface;
 interface ResponseFactoryInterface
 {
     /**
-     * @param AbstractResponseContext $context
+     * @param AbstractFormattingContext $context
      * @return bool
      */
-    public function supports(AbstractResponseContext $context): bool;
+    public function supports(AbstractFormattingContext $context): bool;
 
     /**
      * @param AbstractFormatableResponse $formatableResponse

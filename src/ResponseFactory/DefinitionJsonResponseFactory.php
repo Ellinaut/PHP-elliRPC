@@ -2,9 +2,9 @@
 
 namespace Ellinaut\ElliRPC\ResponseFactory;
 
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\DefinitionContext;
 use Ellinaut\ElliRPC\DataTransfer\Response\AbstractFormatableResponse;
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\DefinitionResponseContext;
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\AbstractResponseContext;
 use Ellinaut\ElliRPC\DataTransfer\Response\DocumentationResponse;
 use Ellinaut\ElliRPC\DataTransfer\Response\PackageDefinitionsResponse;
 use Ellinaut\ElliRPC\DataTransfer\Response\SchemaDefinitionResponse;
@@ -20,25 +20,25 @@ class DefinitionJsonResponseFactory extends AbstractResponseFactory
     use DefinitionMapperTrait;
 
     /**
-     * @param AbstractResponseContext $context
+     * @param AbstractFormattingContext $context
      * @return bool
      */
-    public function supports(AbstractResponseContext $context): bool
+    public function supports(AbstractFormattingContext $context): bool
     {
-        if (!$context instanceof DefinitionResponseContext) {
+        if (!$context instanceof DefinitionContext) {
             return false;
         }
 
-        if ($context->getContentType() !== 'json') {
+        if ($context->getContentTypeExtension() !== 'json') {
             return false;
         }
 
         return in_array(
             $context->getDefinitionEndpoint(),
             [
-                DefinitionResponseContext::ENDPOINT_DOCUMENTATION,
-                DefinitionResponseContext::ENDPOINT_PACKAGES,
-                DefinitionResponseContext::ENDPOINT_SCHEMA,
+                DefinitionContext::ENDPOINT_DOCUMENTATION,
+                DefinitionContext::ENDPOINT_PACKAGES,
+                DefinitionContext::ENDPOINT_SCHEMA,
             ],
             true
         );

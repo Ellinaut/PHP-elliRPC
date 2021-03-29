@@ -2,10 +2,10 @@
 
 namespace Ellinaut\ElliRPC\ResponseFactory;
 
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\FileContext;
 use Ellinaut\ElliRPC\DataTransfer\Response\AbstractFormatableResponse;
 use Ellinaut\ElliRPC\DataTransfer\Response\FileDeletedResponse;
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\AbstractResponseContext;
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\FileResponseContext;
 use Ellinaut\ElliRPC\DataTransfer\Response\FileReferenceResponse;
 use Ellinaut\ElliRPC\DataTransfer\Response\FileResponse;
 use Ellinaut\ElliRPC\Exception\UnsupportedResponseException;
@@ -18,12 +18,12 @@ use Throwable;
 class FileResponseFactory extends AbstractResponseFactory
 {
     /**
-     * @param AbstractResponseContext $context
+     * @param AbstractFormattingContext $context
      * @return bool
      */
-    public function supports(AbstractResponseContext $context): bool
+    public function supports(AbstractFormattingContext $context): bool
     {
-        return $context instanceof FileResponseContext;
+        return $context instanceof FileContext;
     }
 
     /**
@@ -44,7 +44,7 @@ class FileResponseFactory extends AbstractResponseFactory
             return $this->createHttpResponseWithBody(null, 'text/plain', 201)
                 ->withHeader(
                     'Content-Location',
-                    $formatableResponse->getContent()->getContentLocationValue()
+                    $formatableResponse->getContent()->getPublicLocation()
                 );
         }
 

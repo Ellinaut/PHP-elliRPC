@@ -2,11 +2,13 @@
 
 namespace Ellinaut\ElliRPC\RequestParser;
 
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\DefinitionContext;
 use Ellinaut\ElliRPC\DataTransfer\Request\AbstractRequest;
 use Ellinaut\ElliRPC\DataTransfer\Request\DocumentationRequest;
 use Ellinaut\ElliRPC\DataTransfer\Request\PackageDefinitionsRequest;
 use Ellinaut\ElliRPC\DataTransfer\Request\SchemaDefinitionRequest;
 use Psr\Http\Message\RequestInterface;
+use Throwable;
 
 /**
  * @author Philipp Marien
@@ -16,6 +18,7 @@ class DefinitionRequestParser extends AbstractRequestParser
     /**
      * @param RequestInterface $request
      * @return AbstractRequest|null
+     * @throws Throwable
      */
     public function parseRequest(RequestInterface $request): ?AbstractRequest
     {
@@ -24,22 +27,28 @@ class DefinitionRequestParser extends AbstractRequestParser
             return null;
         }
 
-        switch ($this->parseEndpointFromUri($request->getUri())) {
+        $context = new DefinitionContext(
+            $this->parseContentTypeExtensionFromUri($request->getUri()),
+            $request->getHeader('Accept'),
+            $this->parseEndpointFromUri($request->getUri())
+        );
+
+        switch ($context->getDefinitionEndpoint()) {
             case '_documentation':
                 return new DocumentationRequest(
-                    $request->getHeaders(),
-                    $this->parseContentTypeExtensionFromUri($request->getUri())
+                    $context,
+                    $request->getHeaders()
                 );
             case '_packages':
                 return new PackageDefinitionsRequest(
-                    $request->getHeaders(),
-                    $this->parseContentTypeExtensionFromUri($request->getUri())
+                    $context,
+                    $request->getHeaders()
                 );
             case '_schema':
                 return new SchemaDefinitionRequest(
-                    $request->getHeaders(),
-                    $this->parseContentTypeExtensionFromUri($request->getUri()),
+                    $context,
                     $this->parseAdjustedPathFromUri($request->getUri()),
+                    $request->getHeaders()
                 );
         }
 

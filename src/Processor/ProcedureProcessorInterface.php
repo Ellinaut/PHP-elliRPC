@@ -2,8 +2,8 @@
 
 namespace Ellinaut\ElliRPC\Processor;
 
-use Ellinaut\ElliRPC\DataTransfer\Workflow\Procedure;
-use Ellinaut\ElliRPC\DataTransfer\Workflow\ProcedureResult;
+use Ellinaut\ElliRPC\DataTransfer\Procedure;
+use Ellinaut\ElliRPC\DataTransfer\ProcedureBody;
 
 /**
  * @author Philipp Marien
@@ -13,7 +13,7 @@ interface ProcedureProcessorInterface
     /**
      * @param string $transactionId
      * @param Procedure $procedure
-     * @return ProcedureResult
+     * @return ProcedureBody
      */
-    public function process(string $transactionId, Procedure $procedure): ProcedureResult;
+    public function process(string $transactionId, Procedure $procedure): ProcedureBody;
 }

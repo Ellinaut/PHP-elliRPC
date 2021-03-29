@@ -2,83 +2,38 @@
 
 namespace Ellinaut\ElliRPC\DataTransfer\Request;
 
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
+use Ellinaut\ElliRPC\DataTransfer\Procedure;
+
 /**
  * @author Philipp Marien
  */
 class ProcedureExecutionRequest extends AbstractRequest
 {
     /**
-     * @var string
+     * @var Procedure
      */
-    private string $packageName;
+    private Procedure $procedure;
 
     /**
-     * @var string
-     */
-    private string $procedureName;
-
-    /**
-     * @var array
-     */
-    private array $query;
-
-    /**
-     * @var string|null
-     */
-    private ?string $body;
-
-    /**
-     * @param string[][] $headers
-     * @param string $requestedContentType
-     * @param string $packageName
-     * @param string $procedureName
-     * @param array $query
-     * @param string|null $body
+     * @param AbstractFormattingContext $context
+     * @param Procedure $procedure
+     * @param string[][] $requestHeaders
      */
     public function __construct(
-        array $headers,
-        string $requestedContentType,
-        string $packageName,
-        string $procedureName,
-        array $query,
-        ?string $body
+        AbstractFormattingContext $context,
+        Procedure $procedure,
+        array $requestHeaders = []
     ) {
-        parent::__construct($headers, $requestedContentType);
-        $this->packageName = $packageName;
-        $this->procedureName = $procedureName;
-        $this->query = $query;
-        $this->body = $body;
+        parent::__construct($context, $requestHeaders);
+        $this->procedure = $procedure;
     }
 
     /**
-     * @return string
+     * @return Procedure
      */
-    public function getPackageName(): string
+    public function getProcedure(): Procedure
     {
-        return $this->packageName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getProcedureName(): string
-    {
-        return $this->procedureName;
-    }
-
-    /**
-     * @return array
-     */
-    public function getQuery(): array
-    {
-        return $this->query;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getBody(): ?string
-    {
-        return $this->body;
+        return $this->procedure;
     }
 }

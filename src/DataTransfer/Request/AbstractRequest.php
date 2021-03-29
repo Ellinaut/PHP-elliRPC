@@ -2,32 +2,42 @@
 
 namespace Ellinaut\ElliRPC\DataTransfer\Request;
 
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
+
 /**
  * @author Philipp Marien
  */
 abstract class AbstractRequest
 {
     /**
+     * @var AbstractFormattingContext
+     */
+    private AbstractFormattingContext $context;
+
+    /**
      * @var string[][]
      */
-    private array $headers = [];
+    private array $requestHeaders = [];
 
     /**
-     * @var string
+     * @param AbstractFormattingContext $context
+     * @param string[][] $requestHeaders
      */
-    private string $requestedContentType;
-
-    /**
-     * @param string[][] $headers
-     * @param string $requestedContentType
-     */
-    public function __construct(array $headers, string $requestedContentType)
+    public function __construct(AbstractFormattingContext $context, array $requestHeaders = [])
     {
-        foreach ($headers as $header => $values) {
-            $this->headers[strtolower($header)] = $values;
-        }
+        $this->context = $context;
 
-        $this->requestedContentType = $requestedContentType;
+        foreach ($requestHeaders as $requestHeader => $values) {
+            $this->requestHeaders[strtolower($requestHeader)] = $values;
+        }
+    }
+
+    /**
+     * @return AbstractFormattingContext
+     */
+    public function getContext(): AbstractFormattingContext
+    {
+        return $this->context;
     }
 
     /**
@@ -37,11 +47,11 @@ abstract class AbstractRequest
     public function getHeaderValues(string $header): array
     {
         $header = strtolower($header);
-        if (!array_key_exists($header, $this->headers)) {
+        if (!array_key_exists($header, $this->requestHeaders)) {
             return [];
         }
 
-        return $this->headers[$header];
+        return $this->requestHeaders[$header];
     }
 
     /**
@@ -53,13 +63,5 @@ abstract class AbstractRequest
         $values = $this->getHeaderValues($header);
 
         return count($values) > 0 ? $values[0] : null;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRequestedContentType(): string
-    {
-        return $this->requestedContentType;
     }
 }

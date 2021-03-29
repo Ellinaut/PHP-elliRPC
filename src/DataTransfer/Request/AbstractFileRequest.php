@@ -2,6 +2,8 @@
 
 namespace Ellinaut\ElliRPC\DataTransfer\Request;
 
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
+
 /**
  * @author Philipp Marien
  */
@@ -13,13 +15,16 @@ abstract class AbstractFileRequest extends AbstractRequest
     private string $publicFileLocation;
 
     /**
-     * @param string[][] $headers
-     * @param string $requestedContentType
+     * @param AbstractFormattingContext $context
      * @param string $publicFileLocation
+     * @param string[][] $requestHeaders
      */
-    public function __construct(array $headers, string $requestedContentType, string $publicFileLocation)
-    {
-        parent::__construct($headers, $requestedContentType);
+    public function __construct(
+        AbstractFormattingContext $context,
+        string $publicFileLocation,
+        array $requestHeaders = []
+    ) {
+        parent::__construct($context, $requestHeaders);
         $this->publicFileLocation = $publicFileLocation;
     }
 

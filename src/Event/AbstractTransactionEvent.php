@@ -5,7 +5,7 @@ namespace Ellinaut\ElliRPC\Event;
 /**
  * @author Philipp Marien
  */
-class AbstractTransactionEvent
+abstract class AbstractTransactionEvent
 {
     /**
      * @var string

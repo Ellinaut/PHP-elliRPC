@@ -2,7 +2,7 @@
 
 namespace Ellinaut\ElliRPC\DataTransfer\Response;
 
-use Ellinaut\ElliRPC\DataTransfer\Response\Context\AbstractResponseContext;
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
 
 /**
  * @author Philipp Marien
@@ -10,22 +10,22 @@ use Ellinaut\ElliRPC\DataTransfer\Response\Context\AbstractResponseContext;
 abstract class AbstractFormatableResponse
 {
     /**
-     * @var AbstractResponseContext
+     * @var AbstractFormattingContext
      */
-    private AbstractResponseContext $context;
+    private AbstractFormattingContext $context;
 
     /**
-     * @param AbstractResponseContext $context
+     * @param AbstractFormattingContext $context
      */
-    public function __construct(AbstractResponseContext $context)
+    public function __construct(AbstractFormattingContext $context)
     {
         $this->context = $context;
     }
 
     /**
-     * @return AbstractResponseContext
+     * @return AbstractFormattingContext
      */
-    public function getContext(): AbstractResponseContext
+    public function getContext(): AbstractFormattingContext
     {
         return $this->context;
     }
