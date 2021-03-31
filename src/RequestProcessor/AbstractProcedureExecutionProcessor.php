@@ -5,7 +5,7 @@ namespace Ellinaut\ElliRPC\RequestProcessor;
 use Ellinaut\ElliRPC\Event\TransactionFailed;
 use Ellinaut\ElliRPC\Event\TransactionFinished;
 use Ellinaut\ElliRPC\Event\TransactionStarted;
-use Ellinaut\ElliRPC\Processor\ProcedureProcessorInterface;
+use Ellinaut\ElliRPC\Processor\ProcessorInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -19,24 +19,24 @@ abstract class AbstractProcedureExecutionProcessor implements RequestProcessorIn
     private EventDispatcherInterface $eventDispatcher;
 
     /**
-     * @var ProcedureProcessorInterface
+     * @var ProcessorInterface
      */
-    private ProcedureProcessorInterface $processor;
+    private ProcessorInterface $processor;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
-     * @param ProcedureProcessorInterface $processor
+     * @param ProcessorInterface $processor
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, ProcedureProcessorInterface $processor)
+    public function __construct(EventDispatcherInterface $eventDispatcher, ProcessorInterface $processor)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->processor = $processor;
     }
 
     /**
-     * @return ProcedureProcessorInterface
+     * @return ProcessorInterface
      */
-    protected function getProcessor(): ProcedureProcessorInterface
+    protected function getProcessor(): ProcessorInterface
     {
         return $this->processor;
     }

@@ -8,7 +8,7 @@ use Ellinaut\ElliRPC\DataTransfer\ProcedureBody;
 /**
  * @author Philipp Marien
  */
-interface ProcedureProcessorInterface
+interface ProcessorInterface
 {
     /**
      * @param string $transactionId

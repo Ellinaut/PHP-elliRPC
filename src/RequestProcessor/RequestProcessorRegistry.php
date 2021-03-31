@@ -9,7 +9,7 @@ use Ellinaut\ElliRPC\Exception\InvalidRequestProcessorException;
 /**
  * @author Philipp Marien
  */
-class ProcessorRegistry implements RequestProcessorInterface
+class RequestProcessorRegistry implements RequestProcessorInterface
 {
     /**
      * @var RequestProcessorInterface[]
