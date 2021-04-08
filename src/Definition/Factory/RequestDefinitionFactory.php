@@ -43,9 +43,14 @@ class RequestDefinitionFactory implements RequestDefinitionFactoryInterface
             $data = $this->dataDefinitionFactory->createDefinition($input['data']);
         }
 
+        $paginatedBy = null;
+        if (is_array($input['paginatedBy'])) {
+            $paginatedBy = $this->schemaReferenceDefinitionFactory->createDefinition($input['paginatedBy']);
+        }
+
         return new RequestDefinition(
             $data,
-            $this->schemaReferenceDefinitionFactory->createDefinition($input['paginatedBy']),
+            $paginatedBy,
             $input['sortedBy']
         );
     }

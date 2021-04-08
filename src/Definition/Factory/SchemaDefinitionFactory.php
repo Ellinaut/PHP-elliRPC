@@ -43,10 +43,15 @@ class SchemaDefinitionFactory implements SchemaDefinitionFactoryInterface
             $propertyDefinitions[] = $this->propertyDefinitionFactory->createDefinition($property);
         }
 
+        $extends = null;
+        if (is_array($input['extends'])) {
+            $extends = $this->schemaReferenceDefinitionFactory->createDefinition($input['extends']);
+        }
+
         return new SchemaDefinition(
             $input['name'],
             (bool)$input['abstract'],
-            $this->schemaReferenceDefinitionFactory->createDefinition($input['extends']),
+            $extends,
             $input['description'],
             $propertyDefinitions
         );
