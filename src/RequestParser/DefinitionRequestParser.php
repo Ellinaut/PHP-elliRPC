@@ -34,17 +34,17 @@ class DefinitionRequestParser extends AbstractRequestParser
         );
 
         switch ($context->getDefinitionEndpoint()) {
-            case '_documentation':
+            case DefinitionContext::ENDPOINT_DOCUMENTATION:
                 return new DocumentationRequest(
                     $context,
                     $request->getHeaders()
                 );
-            case '_packages':
+            case DefinitionContext::ENDPOINT_PACKAGES:
                 return new PackageDefinitionsRequest(
                     $context,
                     $request->getHeaders()
                 );
-            case '_schema':
+            case DefinitionContext::ENDPOINT_SCHEMA:
                 return new SchemaDefinitionRequest(
                     $context,
                     $this->parseAdjustedPathFromUri($request->getUri()),
