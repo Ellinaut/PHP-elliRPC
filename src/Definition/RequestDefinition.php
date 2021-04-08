@@ -8,9 +8,9 @@ namespace Ellinaut\ElliRPC\Definition;
 class RequestDefinition implements RequestDefinitionInterface
 {
     /**
-     * @var DataDefinitionInterface
+     * @var DataDefinitionInterface|null
      */
-    private DataDefinitionInterface $requestDataDefinition;
+    private ?DataDefinitionInterface $requestDataDefinition;
 
     /**
      * @var SchemaReferenceDefinitionInterface|null
@@ -23,12 +23,12 @@ class RequestDefinition implements RequestDefinitionInterface
     private array $sortedByDefinition;
 
     /**
-     * @param DataDefinitionInterface $requestDataDefinition
+     * @param DataDefinitionInterface|null $requestDataDefinition
      * @param SchemaReferenceDefinitionInterface|null $paginatedByDefinition
      * @param string[] $sortedByDefinition
      */
     public function __construct(
-        DataDefinitionInterface $requestDataDefinition,
+        ?DataDefinitionInterface $requestDataDefinition,
         ?SchemaReferenceDefinitionInterface $paginatedByDefinition,
         array $sortedByDefinition
     ) {
@@ -38,9 +38,9 @@ class RequestDefinition implements RequestDefinitionInterface
     }
 
     /**
-     * @return DataDefinitionInterface
+     * @return DataDefinitionInterface|null
      */
-    public function getRequestDataDefinition(): DataDefinitionInterface
+    public function getRequestDataDefinition(): ?DataDefinitionInterface
     {
         return $this->requestDataDefinition;
     }

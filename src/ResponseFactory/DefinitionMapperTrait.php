@@ -78,11 +78,14 @@ trait DefinitionMapperTrait
             );
         }
 
+        $data = $definition->getRequestDefinition()->getRequestDataDefinition();
         $requestDefinitionData = [
-            'data' => $this->mapDataDefinitionToArray($definition->getRequestDefinition()->getRequestDataDefinition()),
+            'data' => $data ? $this->mapDataDefinitionToArray($data) : null,
             'paginatedBy' => $paginatedBy,
             'sortedBy' => $definition->getRequestDefinition()->getSortedByDefinition()
         ];
+
+        $response = $definition->getResponseDataDefinition();
 
         return [
             'name' => $definition->getName(),
@@ -90,7 +93,7 @@ trait DefinitionMapperTrait
             'methods' => $definition->getMethods(),
             'contentTypes' => $definition->getContentTypes(),
             'request' => $requestDefinitionData,
-            'response' => $this->mapDataDefinitionToArray($definition->getResponseDataDefinition()),
+            'response' => $response ? $this->mapDataDefinitionToArray($response) : null,
         ];
     }
 

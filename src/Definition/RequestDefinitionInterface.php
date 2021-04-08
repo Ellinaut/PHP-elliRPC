@@ -7,7 +7,10 @@ namespace Ellinaut\ElliRPC\Definition;
  */
 interface RequestDefinitionInterface
 {
-    public function getRequestDataDefinition(): DataDefinitionInterface;
+    /**
+     * @return DataDefinitionInterface|null
+     */
+    public function getRequestDataDefinition(): ?DataDefinitionInterface;
 
     /**
      * @return SchemaReferenceDefinitionInterface|null
