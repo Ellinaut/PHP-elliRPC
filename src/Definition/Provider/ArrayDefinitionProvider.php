@@ -26,7 +26,7 @@ class ArrayDefinitionProvider implements DefinitionProviderInterface
     /**
      * @var ApplicationDefinitionInterface|null
      */
-    private ?ApplicationDefinitionInterface $applicationDefinition;
+    private ?ApplicationDefinitionInterface $applicationDefinition = null;
 
     /**
      * @param ApplicationDefinitionFactoryInterface $applicationDefinitionFactory
