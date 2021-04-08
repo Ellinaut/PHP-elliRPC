@@ -19,7 +19,7 @@ class RequestParserChain implements RequestParserInterface
      * @param RequestParserInterface $requestParser
      * @param int $priority
      */
-    public function addRequestParser(RequestParserInterface $requestParser, int $priority = 5): void
+    public function register(RequestParserInterface $requestParser, int $priority = 5): void
     {
         $this->parsers[$priority][] = $requestParser;
     }
