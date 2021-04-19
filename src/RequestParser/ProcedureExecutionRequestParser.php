@@ -41,8 +41,7 @@ class ProcedureExecutionRequestParser extends AbstractRequestParser
 
         $procedureDefinition = new ProcedureDefinition($packageName, $procedureName);
 
-        $query = [];
-        parse_str($request->getUri()->getQuery(), $query);
+        $query = $this->parseQueryFromUri($request->getUri());
 
         return new ProcedureExecutionRequest(
             new ProcedureExecutionContext(
@@ -72,8 +71,7 @@ class ProcedureExecutionRequestParser extends AbstractRequestParser
     {
         $requestBody = trim($request->getBody()->getContents());
         if (empty($requestBody)) {
-            $query = [];
-            parse_str($request->getUri()->getQuery(), $query);
+            $query = $this->parseQueryFromUri($request->getUri());
 
             return $query['data'] ?? [];
         }

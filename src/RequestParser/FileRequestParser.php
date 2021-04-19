@@ -27,23 +27,30 @@ class FileRequestParser extends AbstractRequestParser
             return null;
         }
 
+        $parsedContentType = $this->parseContentTypeExtensionFromUri($request->getUri());
+
+        $publicFileLocation = $this->parseAdjustedPathFromUri($request->getUri());
+        if ($parsedContentType !== '') {
+            $publicFileLocation .= '.' . $parsedContentType;
+        }
+
         switch (strtoupper($request->getMethod())) {
             case 'GET':
                 return new FileDownloadRequest(
                     new FileReferenceContext(
-                        $this->parseContentTypeExtensionFromUri($request->getUri()),
+                        $parsedContentType,
                         $request->getHeader('Accept')
                     ),
-                    $this->parseAdjustedPathFromUri($request->getUri()),
+                    $publicFileLocation,
                     $request->getHeaders()
                 );
             case 'POST':
                 return new FileUploadRequest(
                     new FileContext(
-                        $this->parseContentTypeExtensionFromUri($request->getUri()),
+                        $parsedContentType,
                         $request->getHeader('Accept')
                     ),
-                    $this->parseAdjustedPathFromUri($request->getUri()),
+                    $publicFileLocation,
                     $request->getBody()->getContents(),
                     $request->getHeaders()
                 );
