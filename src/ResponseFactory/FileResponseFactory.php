@@ -4,6 +4,7 @@ namespace Ellinaut\ElliRPC\ResponseFactory;
 
 use Ellinaut\ElliRPC\DataTransfer\FormattingContext\AbstractFormattingContext;
 use Ellinaut\ElliRPC\DataTransfer\FormattingContext\FileContext;
+use Ellinaut\ElliRPC\DataTransfer\FormattingContext\FileReferenceContext;
 use Ellinaut\ElliRPC\DataTransfer\Response\AbstractFormatableResponse;
 use Ellinaut\ElliRPC\DataTransfer\Response\FileDeletedResponse;
 use Ellinaut\ElliRPC\DataTransfer\Response\FileReferenceResponse;
@@ -23,7 +24,7 @@ class FileResponseFactory extends AbstractResponseFactory
      */
     public function supports(AbstractFormattingContext $context): bool
     {
-        return $context instanceof FileContext;
+        return $context instanceof FileContext || $context instanceof FileReferenceContext;
     }
 
     /**
