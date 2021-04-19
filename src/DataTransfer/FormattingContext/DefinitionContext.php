@@ -7,11 +7,11 @@ namespace Ellinaut\ElliRPC\DataTransfer\FormattingContext;
  */
 class DefinitionContext extends AbstractFormattingContext
 {
-    public const ENDPOINT_DOCUMENTATION = 'documentation';
+    public const ENDPOINT_APPLICATION = 'application';
 
     public const ENDPOINT_PACKAGES = 'packages';
 
-    public const ENDPOINT_SCHEMA = 'schema';
+    public const ENDPOINT_SCHEMAS = 'schemas';
 
     /**
      * @var string

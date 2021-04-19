@@ -36,9 +36,9 @@ class DefinitionJsonResponseFactory extends AbstractResponseFactory
         return in_array(
             $context->getDefinitionEndpoint(),
             [
-                DefinitionContext::ENDPOINT_DOCUMENTATION,
+                DefinitionContext::ENDPOINT_APPLICATION,
                 DefinitionContext::ENDPOINT_PACKAGES,
-                DefinitionContext::ENDPOINT_SCHEMA,
+                DefinitionContext::ENDPOINT_SCHEMAS,
             ],
             true
         );

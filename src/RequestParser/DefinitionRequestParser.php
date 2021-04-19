@@ -27,14 +27,19 @@ class DefinitionRequestParser extends AbstractRequestParser
             return null;
         }
 
+        $endpoint = $this->parseEndpointFromUri($request->getUri());
+        if ($endpoint !== '@definitions') {
+            return null;
+        }
+
         $context = new DefinitionContext(
             $this->parseContentTypeExtensionFromUri($request->getUri()),
             $request->getHeader('Accept'),
-            $this->parseEndpointFromUri($request->getUri())
+            explode('/', $this->parseAdjustedPathFromUri($request->getUri()), 2)[0]
         );
 
         switch ($context->getDefinitionEndpoint()) {
-            case DefinitionContext::ENDPOINT_DOCUMENTATION:
+            case DefinitionContext::ENDPOINT_APPLICATION:
                 return new DocumentationRequest(
                     $context,
                     $request->getHeaders()
@@ -44,7 +49,7 @@ class DefinitionRequestParser extends AbstractRequestParser
                     $context,
                     $request->getHeaders()
                 );
-            case DefinitionContext::ENDPOINT_SCHEMA:
+            case DefinitionContext::ENDPOINT_SCHEMAS:
                 return new SchemaDefinitionRequest(
                     $context,
                     $this->parseAdjustedPathFromUri($request->getUri()),

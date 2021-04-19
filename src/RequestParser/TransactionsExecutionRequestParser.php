@@ -17,7 +17,7 @@ class TransactionsExecutionRequestParser extends AbstractBulkRequestParser
      */
     protected function getPath(): string
     {
-        return '@transaction';
+        return '@transactions/execute';
     }
 
     /**

@@ -17,7 +17,7 @@ class ProcedureExecutionBulkRequestParser extends AbstractBulkRequestParser
      */
     protected function getPath(): string
     {
-        return '@procedures';
+        return '@procedures/executeBulk';
     }
 
     /**
