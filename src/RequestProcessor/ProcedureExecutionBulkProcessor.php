@@ -32,9 +32,9 @@ class ProcedureExecutionBulkProcessor extends AbstractProcedureExecutionProcesso
             try {
                 $this->startTransaction($transactionId);
 
-                $procedureResultBody = $this->getProcessor()->process($transactionId, $procedure);
+                $procedureResult = $this->getProcessor()->process($transactionId, $procedure);
 
-                $executionResults[] = new ExecutionResult($procedure->getDefinition(), $procedureResultBody, null);
+                $executionResults[] = new ExecutionResult($procedure->getDefinition(), $procedureResult, null);
 
                 $this->finishTransaction($transactionId);
             } catch (Throwable $exception) {

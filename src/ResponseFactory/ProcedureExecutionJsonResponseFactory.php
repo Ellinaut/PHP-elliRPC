@@ -39,7 +39,7 @@ class ProcedureExecutionJsonResponseFactory extends AbstractResponseFactory
             throw new UnsupportedResponseException();
         }
 
-        $data = $formatableResponse->getContent()->getData();
+        $data = $formatableResponse->getContent();
 
         $content = '';
         if (is_array($data)) {

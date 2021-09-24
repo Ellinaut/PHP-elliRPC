@@ -3,7 +3,6 @@
 namespace Ellinaut\ElliRPC\Procedure;
 
 use Ellinaut\ElliRPC\DataTransfer\Procedure;
-use Ellinaut\ElliRPC\DataTransfer\ProcedureBody;
 use Ellinaut\ElliRPC\Exception\PackageNotFoundException;
 use Ellinaut\ElliRPC\Exception\ProcedureNotFoundException;
 
@@ -30,9 +29,9 @@ class ProcessorRegistry implements ProcessorInterface
     /**
      * @param string $transactionId
      * @param Procedure $procedure
-     * @return ProcedureBody
+     * @return array|null
      */
-    public function process(string $transactionId, Procedure $procedure): ProcedureBody
+    public function process(string $transactionId, Procedure $procedure): ?array
     {
         $packageName = $procedure->getDefinition()->getPackageName();
         if (!array_key_exists($packageName, $this->processors)) {

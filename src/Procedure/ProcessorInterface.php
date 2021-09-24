@@ -3,7 +3,6 @@
 namespace Ellinaut\ElliRPC\Procedure;
 
 use Ellinaut\ElliRPC\DataTransfer\Procedure;
-use Ellinaut\ElliRPC\DataTransfer\ProcedureBody;
 
 /**
  * @author Philipp Marien
@@ -13,7 +12,7 @@ interface ProcessorInterface
     /**
      * @param string $transactionId
      * @param Procedure $procedure
-     * @return ProcedureBody
+     * @return array|null
      */
-    public function process(string $transactionId, Procedure $procedure): ProcedureBody;
+    public function process(string $transactionId, Procedure $procedure): ?array;
 }

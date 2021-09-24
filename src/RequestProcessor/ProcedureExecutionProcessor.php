@@ -30,11 +30,11 @@ class ProcedureExecutionProcessor extends AbstractProcedureExecutionProcessor
         try {
             $this->startTransaction($transactionId);
 
-            $procedureResultBody = $this->getProcessor()->process($transactionId, $request->getProcedure());
+            $procedureResult = $this->getProcessor()->process($transactionId, $request->getProcedure());
 
             $this->finishTransaction($transactionId);
 
-            return new ProcedureExecutionResponse($request->getContext(), $procedureResultBody);
+            return new ProcedureExecutionResponse($request->getContext(), $procedureResult);
         } catch (Throwable $exception) {
             $this->failTransaction($transactionId);
 

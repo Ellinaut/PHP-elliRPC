@@ -15,9 +15,9 @@ class ExecutionResult
     private ProcedureDefinition $definition;
 
     /**
-     * @var ProcedureBody|null
+     * @var array|null
      */
-    private ?ProcedureBody $body;
+    private ?array $data;
 
     /**
      * @var Throwable|null
@@ -26,13 +26,13 @@ class ExecutionResult
 
     /**
      * @param ProcedureDefinition $definition
-     * @param ProcedureBody|null $body
+     * @param array|null $data
      * @param Throwable|null $exception
      */
-    public function __construct(ProcedureDefinition $definition, ?ProcedureBody $body, ?Throwable $exception)
+    public function __construct(ProcedureDefinition $definition, ?array $data, ?Throwable $exception)
     {
         $this->definition = $definition;
-        $this->body = $body;
+        $this->data = $data;
         $this->exception = $exception;
     }
 
@@ -45,11 +45,11 @@ class ExecutionResult
     }
 
     /**
-     * @return ProcedureBody|null
+     * @return array|null
      */
-    public function getBody(): ?ProcedureBody
+    public function getData(): ?array
     {
-        return $this->body;
+        return $this->data;
     }
 
     /**

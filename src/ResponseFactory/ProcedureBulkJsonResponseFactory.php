@@ -44,20 +44,20 @@ class ProcedureBulkJsonResponseFactory extends AbstractResponseFactory
         }
 
         $procedures = [];
-        foreach ($formatableResponse->getContent() as $procedure) {
+        foreach ($formatableResponse->getContent() as $executionResult) {
             $result = null;
             $successful = true;
-            if ($procedure->getBody()) {
-                $result = $procedure->getBody()->getData();
+            if ($executionResult->getData()) {
+                $result = $executionResult->getData();
             }
-            if ($procedure->getException()) {
+            if ($executionResult->getException()) {
                 $successful = false;
-                $result = $this->mapException($procedure->getException());
+                $result = $this->mapException($executionResult->getException());
             }
 
             $procedures[] = [
-                'package' => $procedure->getDefinition()->getPackageName(),
-                'procedure' => $procedure->getDefinition()->getProcedureName(),
+                'package' => $executionResult->getDefinition()->getPackageName(),
+                'procedure' => $executionResult->getDefinition()->getProcedureName(),
                 'successful' => $successful,
                 'result' => $result,
             ];
