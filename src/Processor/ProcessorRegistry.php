@@ -40,7 +40,7 @@ class ProcessorRegistry implements ProcessorInterface
         }
 
         $procedureName = $procedure->getDefinition()->getProcedureName();
-        if (!array_key_exists($packageName, $this->processors[$packageName])) {
+        if (!array_key_exists($procedureName, $this->processors[$packageName])) {
             throw new ProcedureNotFoundException($packageName, $procedureName);
         }
 
