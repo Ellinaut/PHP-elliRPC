@@ -1,6 +1,6 @@
 <?php
 
-namespace Ellinaut\ElliRPC\Processor;
+namespace Ellinaut\ElliRPC\Procedure;
 
 use Ellinaut\ElliRPC\DataTransfer\Procedure;
 use Ellinaut\ElliRPC\DataTransfer\ProcedureBody;

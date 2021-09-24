@@ -5,7 +5,7 @@ namespace Ellinaut\ElliRPC\RequestProcessor;
 use Ellinaut\ElliRPC\Event\TransactionFailed;
 use Ellinaut\ElliRPC\Event\TransactionFinished;
 use Ellinaut\ElliRPC\Event\TransactionStarted;
-use Ellinaut\ElliRPC\Processor\ProcessorInterface;
+use Ellinaut\ElliRPC\Procedure\ProcessorInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
