@@ -5,7 +5,7 @@ namespace Ellinaut\ElliRPC\Definition;
 /**
  * @author Philipp Marien
  */
-interface SchemaDefinitionInterface
+interface SchemaDefinitionInterface extends DefinitionInterface
 {
     /**
      * @return string
@@ -15,7 +15,7 @@ interface SchemaDefinitionInterface
     /**
      * @return bool
      */
-    public function isAbstract(): bool;
+    public function getAbstract(): bool;
 
     /**
      * @return SchemaReferenceDefinitionInterface|null
@@ -28,7 +28,7 @@ interface SchemaDefinitionInterface
     public function getDescription(): ?string;
 
     /**
-     * @return PropertyDefinitionInterface[]
+     * @return ProcedureDefinitionInterface[]
      */
     public function getPropertyDefinitions(): array;
 }

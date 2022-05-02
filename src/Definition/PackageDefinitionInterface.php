@@ -5,7 +5,7 @@ namespace Ellinaut\ElliRPC\Definition;
 /**
  * @author Philipp Marien
  */
-interface PackageDefinitionInterface
+interface PackageDefinitionInterface extends DefinitionInterface
 {
     /**
      * @return string
@@ -20,5 +20,15 @@ interface PackageDefinitionInterface
     /**
      * @return ProcedureDefinitionInterface[]
      */
-    public function getProcedureDefinitions(): array;
+    public function getProcedures(): array;
+
+    /**
+     * @return SchemaDefinitionInterface[]
+     */
+    public function getSchemas(): array;
+
+    /**
+     * @return ErrorDefinitionInterface[]
+     */
+    public function getErrors(): array;
 }

@@ -5,7 +5,7 @@ namespace Ellinaut\ElliRPC\Definition;
 /**
  * @author Philipp Marien
  */
-interface SchemaReferenceDefinitionInterface
+interface SchemaReferenceDefinitionInterface extends DefinitionInterface
 {
     /**
      * @return string|null

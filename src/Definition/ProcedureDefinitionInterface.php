@@ -5,7 +5,7 @@ namespace Ellinaut\ElliRPC\Definition;
 /**
  * @author Philipp Marien
  */
-interface ProcedureDefinitionInterface
+interface ProcedureDefinitionInterface extends DefinitionInterface
 {
     /**
      * @return string
@@ -18,22 +18,17 @@ interface ProcedureDefinitionInterface
     public function getDescription(): ?string;
 
     /**
-     * @return string[]
+     * @return TransportDefinitionInterface
      */
-    public function getMethods(): array;
+    public function getRequestDefinition(): TransportDefinitionInterface;
+
+    /**
+     * @return TransportDefinitionInterface
+     */
+    public function getResponseDefinition(): TransportDefinitionInterface;
 
     /**
      * @return string[]
      */
-    public function getContentTypes(): array;
-
-    /**
-     * @return RequestDefinitionInterface
-     */
-    public function getRequestDefinition(): RequestDefinitionInterface;
-
-    /**
-     * @return DataDefinitionInterface|null
-     */
-    public function getResponseDataDefinition(): ?DataDefinitionInterface;
+    public function getErrors(): array;
 }

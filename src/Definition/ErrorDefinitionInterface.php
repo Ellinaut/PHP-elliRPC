@@ -5,12 +5,12 @@ namespace Ellinaut\ElliRPC\Definition;
 /**
  * @author Philipp Marien
  */
-interface PropertyDefinitionInterface extends DefinitionInterface
+interface ErrorDefinitionInterface extends DefinitionInterface
 {
     /**
      * @return string
      */
-    public function getName(): string;
+    public function getCode(): string;
 
     /**
      * @return string|null
@@ -18,7 +18,7 @@ interface PropertyDefinitionInterface extends DefinitionInterface
     public function getDescription(): ?string;
 
     /**
-     * @return PropertyTypeDefinitionInterface
+     * @return SchemaReferenceDefinitionInterface|null
      */
-    public function getTypeDefinition(): PropertyTypeDefinitionInterface;
+    public function getContext(): ?SchemaReferenceDefinitionInterface;
 }
