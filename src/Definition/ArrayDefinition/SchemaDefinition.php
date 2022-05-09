@@ -12,9 +12,9 @@ use Ellinaut\ElliRPC\Exception\DefinitionException;
  */
 class SchemaDefinition extends AbstractArrayDefinition implements SchemaDefinitionInterface
 {
-    private ?SchemaReferenceDefinitionInterface $extends;
+    private ?SchemaReferenceDefinitionInterface $extends = null;
 
-    private ?array $properties;
+    private ?array $properties = null;
 
     /**
      * @param array $definition

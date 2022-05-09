@@ -11,8 +11,8 @@ use Ellinaut\ElliRPC\Exception\DefinitionException;
  */
 class ProcedureDefinition extends AbstractArrayDefinition implements ProcedureDefinitionInterface
 {
-    private ?TransportDefinitionInterface $request;
-    private ?TransportDefinitionInterface $response;
+    private ?TransportDefinitionInterface $request = null;
+    private ?TransportDefinitionInterface $response = null;
 
     /**
      * @param array $definition

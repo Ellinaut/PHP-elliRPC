@@ -11,7 +11,7 @@ use Ellinaut\ElliRPC\Exception\DefinitionException;
  */
 class PropertyDefinition extends AbstractArrayDefinition implements PropertyDefinitionInterface
 {
-    private ?PropertyTypeDefinitionInterface $propertyType;
+    private ?PropertyTypeDefinitionInterface $propertyType = null;
 
     /**
      * @param array $definition

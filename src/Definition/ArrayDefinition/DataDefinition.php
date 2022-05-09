@@ -11,7 +11,7 @@ use Ellinaut\ElliRPC\Exception\DefinitionException;
  */
 class DataDefinition extends SchemaReferenceDefinition implements DataDefinitionInterface
 {
-    private ?SchemaReferenceDefinitionInterface $wrappedBy;
+    private ?SchemaReferenceDefinitionInterface $wrappedBy = null;
 
     /**
      * @param array $definition

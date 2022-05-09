@@ -11,7 +11,7 @@ use Ellinaut\ElliRPC\Exception\DefinitionException;
  */
 class ErrorDefinition extends AbstractArrayDefinition implements ErrorDefinitionInterface
 {
-    private ?SchemaReferenceDefinitionInterface $context;
+    private ?SchemaReferenceDefinitionInterface $context = null;
 
     /**
      * @param array $definition

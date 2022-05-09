@@ -13,9 +13,9 @@ use Ellinaut\ElliRPC\Exception\DefinitionException;
  */
 class PackageDefinition extends AbstractArrayDefinition implements PackageDefinitionInterface
 {
-    private ?array $procedures;
-    private ?array $schemas;
-    private ?array $errors;
+    private ?array $procedures = null;
+    private ?array $schemas = null;
+    private ?array $errors = null;
 
     /**
      * @param array $definition

@@ -12,8 +12,8 @@ use Ellinaut\ElliRPC\Exception\DefinitionException;
  */
 class TransportDefinition extends AbstractArrayDefinition implements TransportDefinitionInterface
 {
-    private ?DataDefinitionInterface $data;
-    private ?SchemaReferenceDefinitionInterface $meta;
+    private ?DataDefinitionInterface $data = null;
+    private ?SchemaReferenceDefinitionInterface $meta = null;
 
     public static function validate(array $definition): void
     {

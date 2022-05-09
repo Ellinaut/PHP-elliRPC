@@ -67,7 +67,7 @@ class ArrayDefinitionLoader implements PackageDefinitionLoaderInterface, Procedu
     public function loadPackageDefinitions(): array
     {
         $packages = [];
-        foreach (array_keys($this->packageDefinitions) as $package) {
+        foreach (array_keys($this->packageArrayDefinitions) as $package) {
             $packages[] = $this->loadPackageDefinition($package);
         }
 
