@@ -22,6 +22,19 @@ abstract class AbstractHttpHandler
 
     /**
      * @param RequestInterface $request
+     * @param string $separator
+     * @return string
+     */
+    protected function getFirstPathPart(RequestInterface $request, string $separator): string
+    {
+        $pathParts = explode($separator, $request->getUri()->getPath());
+
+        return $pathParts[0];
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @param string $separator
      * @return string
      */
     protected function getLastPathPart(RequestInterface $request, string $separator): string
@@ -54,10 +67,12 @@ abstract class AbstractHttpHandler
      */
     protected function createJsonResponse(JsonSerializable $body, int $status = 200): ResponseInterface
     {
-        return $this->responseFactory->createResponse($status)->withBody(
-            $this->streamFactory->createStream(
-                json_encode($body, JSON_THROW_ON_ERROR)
-            )
-        );
+        return $this->responseFactory->createResponse($status)
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody(
+                $this->streamFactory->createStream(
+                    json_encode($body, JSON_THROW_ON_ERROR)
+                )
+            );
     }
 }
