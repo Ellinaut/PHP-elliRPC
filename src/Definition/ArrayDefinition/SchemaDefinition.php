@@ -86,4 +86,18 @@ class SchemaDefinition extends AbstractArrayDefinition implements SchemaDefiniti
 
         return $this->properties;
     }
+
+    /**
+     * @throws DefinitionException
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'name' => $this->getName(),
+            'abstract' => $this->getAbstract(),
+            'extends' => $this->getExtendsDefinition(),
+            'description' => $this->getDescription(),
+            'properties' => $this->getPropertyDefinitions(),
+        ];
+    }
 }

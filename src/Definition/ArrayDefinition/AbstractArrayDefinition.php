@@ -12,7 +12,7 @@ abstract class AbstractArrayDefinition
     /**
      * @throws DefinitionException
      */
-    public function __construct(protected array $definition)
+    public function __construct(protected readonly array $definition)
     {
         static::validate($this->definition);
     }

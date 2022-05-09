@@ -3,7 +3,7 @@
 namespace Ellinaut\ElliRPC\Definition\Loader;
 
 use Ellinaut\ElliRPC\Definition\PackageDefinitionInterface;
-use Ellinaut\ElliRPC\Exception\LoaderException;
+use Ellinaut\ElliRPC\Exception\DefinitionLoaderException;
 
 /**
  * @author Philipp Marien
@@ -11,9 +11,14 @@ use Ellinaut\ElliRPC\Exception\LoaderException;
 interface PackageDefinitionLoaderInterface
 {
     /**
+     * @return PackageDefinitionInterface[]
+     */
+    public function loadPackageDefinitions(): array;
+
+    /**
      * @param string $package
      * @return PackageDefinitionInterface
-     * @throws LoaderException
+     * @throws DefinitionLoaderException
      */
     public function loadPackageDefinition(string $package): PackageDefinitionInterface;
 }

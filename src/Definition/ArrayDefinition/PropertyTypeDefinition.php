@@ -47,4 +47,13 @@ class PropertyTypeDefinition extends AbstractArrayDefinition implements Property
     {
         return $this->definition['options'];
     }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'context' => $this->getContext(),
+            'type' => $this->getType(),
+            'options' => $this->getOptions(),
+        ];
+    }
 }

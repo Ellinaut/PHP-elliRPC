@@ -15,10 +15,7 @@ RUN apt-get update \
 && apt-get install -y \
     git \
     unzip \
-    php8.0 \
-    php8.0-cli \
-    php8.0-curl \
-    php8.0-xml \
-    php8.0-zip
+    php8.1 \
+    php8.1-zip
 
 ENTRYPOINT while true; do sleep 30; done

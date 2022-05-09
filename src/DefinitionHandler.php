@@ -3,69 +3,57 @@
 namespace Ellinaut\ElliRPC;
 
 use Ellinaut\ElliRPC\Definition\Loader\PackageDefinitionLoaderInterface;
-use Ellinaut\ElliRPC\Definition\Loader\ProcedureDefinitionLoaderInterface;
-use Ellinaut\ElliRPC\Definition\Loader\SchemaDefinitionLoaderInterface;
-use Ellinaut\ElliRPC\Definition\PackageDefinitionInterface;
-use Ellinaut\ElliRPC\Definition\ProcedureDefinitionInterface;
-use Ellinaut\ElliRPC\Definition\SchemaDefinitionInterface;
+use Ellinaut\ElliRPC\Value\JsonSerializableArray;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Throwable;
 
 /**
  * @author Philipp Marien
  */
-class DefinitionHandler
+class DefinitionHandler extends AbstractHttpHandler
 {
     public function __construct(
-        protected PackageDefinitionLoaderInterface $packageDefinitionLoader,
-        protected ProcedureDefinitionLoaderInterface $procedureDefinitionLoader,
-        protected SchemaDefinitionLoaderInterface $schemaDefinitionLoader
+        StreamFactoryInterface $streamFactory,
+        ResponseFactoryInterface $responseFactory,
+        protected readonly string $application,
+        protected readonly ?string $description,
+        protected readonly PackageDefinitionLoaderInterface $packageDefinitionLoader
     ) {
-    }
-
-    public function getDocumentationJson(): string
-    {
-        //@todo load full application documentation and serialize it to json
+        parent::__construct($streamFactory, $responseFactory);
     }
 
     /**
-     * @param string $package
-     * @return string
+     * @param RequestInterface $request
+     * @return ResponseInterface
      * @throws Throwable
      */
-    public function getPackageDefinitionJson(string $package): string
+    public function executeGetDocumentation(RequestInterface $request): ResponseInterface
     {
-        return json_encode($this->loadPackageDefinition($package), JSON_THROW_ON_ERROR);
+        return $this->createJsonResponse(
+            new JsonSerializableArray([
+                'application' => $this->application,
+                'description' => $this->description,
+                'extensions' => [],//@todo
+                'packages' => $this->packageDefinitionLoader->loadPackageDefinitions()
+            ])
+        );
     }
 
     /**
-     * @param string $package
-     * @return PackageDefinitionInterface
+     * @param RequestInterface $request
+     * @return ResponseInterface
      * @throws Throwable
      */
-    public function loadPackageDefinition(string $package): PackageDefinitionInterface
+    public function executeGetPackageDefinition(RequestInterface $request): ResponseInterface
     {
-        return $this->packageDefinitionLoader->loadPackageDefinition($package);
-    }
 
-    /**
-     * @param string $package
-     * @param string $procedure
-     * @return ProcedureDefinitionInterface
-     * @throws Throwable
-     */
-    public function loadProcedureDefinition(string $package, string $procedure): ProcedureDefinitionInterface
-    {
-        return $this->procedureDefinitionLoader->loadProcedureDefinition($package, $procedure);
-    }
-
-    /**
-     * @param string $package
-     * @param string $schema
-     * @return SchemaDefinitionInterface
-     * @throws Throwable
-     */
-    public function loadSchemaDefinition(string $package, string $schema): SchemaDefinitionInterface
-    {
-        return $this->schemaDefinitionLoader->loadSchemaDefinition($package, $schema);
+        return $this->createJsonResponse(
+            $this->packageDefinitionLoader->loadPackageDefinition(
+                $this->getLastPathPart($request, '/definitions/')
+            ),
+        );
     }
 }

@@ -5,13 +5,13 @@ namespace Ellinaut\ElliRPC\Exception;
 /**
  * @author Philipp Marien
  */
-class DefinitionException extends ElliRPCException
+class DefinitionLoaderException extends ElliRPCException
 {
     /**
      * @return string
      */
     public function getErrorCode(): string
     {
-        return 'elli.definition.invalid';
+        return 'elli.definition.loader';
     }
 }

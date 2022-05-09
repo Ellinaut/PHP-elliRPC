@@ -55,7 +55,7 @@ class PackageDefinition extends AbstractArrayDefinition implements PackageDefini
      * @return ProcedureDefinitionInterface[]
      * @throws DefinitionException
      */
-    public function getProcedures(): array
+    public function getProcedureDefinitions(): array
     {
         if (!$this->procedures) {
             $this->procedures = [];
@@ -71,7 +71,7 @@ class PackageDefinition extends AbstractArrayDefinition implements PackageDefini
      * @return SchemaDefinitionInterface[]
      * @throws DefinitionException
      */
-    public function getSchemas(): array
+    public function getSchemaDefinitions(): array
     {
         if (!$this->schemas) {
             $this->schemas = [];
@@ -87,7 +87,7 @@ class PackageDefinition extends AbstractArrayDefinition implements PackageDefini
      * @return ErrorDefinitionInterface[]
      * @throws DefinitionException
      */
-    public function getErrors(): array
+    public function getErrorDefinitions(): array
     {
         if (!$this->errors) {
             $this->errors = [];
@@ -97,5 +97,19 @@ class PackageDefinition extends AbstractArrayDefinition implements PackageDefini
         }
 
         return $this->errors;
+    }
+
+    /**
+     * @throws DefinitionException
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'procedures' => $this->getProcedureDefinitions(),
+            'schemas' => $this->getSchemaDefinitions(),
+            'errors' => $this->getErrorDefinitions(),
+        ];
     }
 }

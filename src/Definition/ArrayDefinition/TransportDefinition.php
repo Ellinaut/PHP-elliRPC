@@ -47,4 +47,15 @@ class TransportDefinition extends AbstractArrayDefinition implements TransportDe
 
         return $this->meta;
     }
+
+    /**
+     * @throws DefinitionException
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'data' => $this->getDataDefinition(),
+            'meta' => $this->getMetaDefinition(),
+        ];
+    }
 }

@@ -55,4 +55,17 @@ class PropertyDefinition extends AbstractArrayDefinition implements PropertyDefi
 
         return $this->propertyType;
     }
+
+
+    /**
+     * @throws DefinitionException
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'type' => $this->getTypeDefinition(),
+        ];
+    }
 }

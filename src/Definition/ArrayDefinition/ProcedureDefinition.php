@@ -81,4 +81,19 @@ class ProcedureDefinition extends AbstractArrayDefinition implements ProcedureDe
     {
         return $this->definition['errors'];
     }
+
+
+    /**
+     * @throws DefinitionException
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'request' => $this->getRequestDefinition(),
+            'response' => $this->getResponseDefinition(),
+            'errors' => $this->getErrors(),
+        ];
+    }
 }

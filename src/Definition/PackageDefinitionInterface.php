@@ -20,15 +20,15 @@ interface PackageDefinitionInterface extends DefinitionInterface
     /**
      * @return ProcedureDefinitionInterface[]
      */
-    public function getProcedures(): array;
+    public function getProcedureDefinitions(): array;
 
     /**
      * @return SchemaDefinitionInterface[]
      */
-    public function getSchemas(): array;
+    public function getSchemaDefinitions(): array;
 
     /**
      * @return ErrorDefinitionInterface[]
      */
-    public function getErrors(): array;
+    public function getErrorDefinitions(): array;
 }
