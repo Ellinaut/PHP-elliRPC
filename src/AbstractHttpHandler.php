@@ -118,10 +118,12 @@ abstract class AbstractHttpHandler
             $status = $error->getStatusCode();
         }
 
-        return $this->responseFactory->createResponse($status)->withBody(
-            $this->streamFactory->createStream(
-                json_encode($error, JSON_THROW_ON_ERROR)
-            )
-        );
+        return $this->responseFactory->createResponse($status)
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody(
+                $this->streamFactory->createStream(
+                    json_encode($error, JSON_THROW_ON_ERROR)
+                )
+            );
     }
 }
