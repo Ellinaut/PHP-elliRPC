@@ -34,7 +34,7 @@ class FileHandler extends AbstractHttpHandler
 
         $file = $this->filesystem->loadFile($realPath);
         if (!$file || !$file->isReadable()) {
-            $this->responseFactory->createResponse(404);
+            return $this->responseFactory->createResponse(404);
         }
 
         return $this->responseFactory->createResponse()
