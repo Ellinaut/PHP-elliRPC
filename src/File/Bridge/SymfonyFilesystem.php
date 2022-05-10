@@ -3,6 +3,7 @@
 namespace Ellinaut\ElliRPC\File\Bridge;
 
 use Ellinaut\ElliRPC\File\FilesystemInterface;
+use RuntimeException;
 use SplFileInfo;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -38,7 +39,7 @@ class SymfonyFilesystem implements FilesystemInterface
     {
         $exists = $this->filesystem->exists($realPath);
         if ($exists && !$allowOverwrite) {
-            //@todo exception
+            throw new RuntimeException('File does already exist and you are not allowed to overwrite it.');
         }
 
         if ($exists) {
