@@ -9,11 +9,9 @@ use Ellinaut\ElliRPC\Procedure\Processor\ProcedureProcessorInterface;
 use Ellinaut\ElliRPC\Procedure\Transaction\TransactionManagerInterface;
 use Ellinaut\ElliRPC\Procedure\Validator\ProcedureValidatorInterface;
 use Ellinaut\ElliRPC\Value\BulkProcedureResult;
-use Ellinaut\ElliRPC\Value\Error;
 use Ellinaut\ElliRPC\Value\JsonSerializableArray;
 use Ellinaut\ElliRPC\Value\ProcedureResult;
 use Ellinaut\ElliRPC\Value\RemoteProcedure;
-use Ellinaut\ElliRPC\Value\TranslateableError;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -29,13 +27,13 @@ class RPCHandler extends AbstractHttpHandler
     public function __construct(
         StreamFactoryInterface $streamFactory,
         ResponseFactoryInterface $responseFactory,
+        ErrorFactoryInterface $errorFactory,
+        ErrorTranslatorInterface $errorTranslator,
         protected readonly ProcedureValidatorInterface $procedureValidator,
         protected readonly ProcedureProcessorInterface $processor,
-        protected readonly TransactionManagerInterface $transactionManager,
-        protected readonly ErrorFactoryInterface $errorFactory,
-        protected readonly ErrorTranslatorInterface $errorTranslator
+        protected readonly TransactionManagerInterface $transactionManager
     ) {
-        parent::__construct($streamFactory, $responseFactory);
+        parent::__construct($streamFactory, $responseFactory, $errorFactory, $errorTranslator);
     }
 
     /**
@@ -101,28 +99,6 @@ class RPCHandler extends AbstractHttpHandler
     }
 
     /**
-     * @param Throwable $throwable
-     * @return Error
-     */
-    protected function createErrorFromThrowable(Throwable $throwable): Error
-    {
-        $error = $this->errorFactory->createFromThrowable($throwable);
-        if (!$error) {
-            $error = new TranslateableError(
-                'en',
-                $throwable->getMessage(),
-                (string)$throwable->getCode()
-            );
-        }
-
-        if ($error instanceof TranslateableError) {
-            $this->errorTranslator->translate($error);
-        }
-
-        return $error;
-    }
-
-    /**
      * @param RemoteProcedure[] $procedures
      * @param bool $abortOnError
      * @return BulkProcedureResult[]
@@ -176,12 +152,16 @@ class RPCHandler extends AbstractHttpHandler
      */
     public function executeExecuteProcedure(RequestInterface $request): ResponseInterface
     {
-        $procedureRequest = $this->getDecodedJsonRequestBody($request);
-        $procedure = $this->createProcedureFromArray($procedureRequest);
+        try {
+            $procedureRequest = $this->getDecodedJsonRequestBody($request);
+            $procedure = $this->createProcedureFromArray($procedureRequest);
 
-        return $this->createJsonResponse(
-            $this->processor->process($procedure)
-        );
+            return $this->createJsonResponse(
+                $this->processor->process($procedure)
+            );
+        } catch (Throwable $throwable) {
+            return $this->createJsonErrorResponse($throwable);
+        }
     }
 
     /**
@@ -191,13 +171,17 @@ class RPCHandler extends AbstractHttpHandler
      */
     public function executeExecuteBulk(RequestInterface $request): ResponseInterface
     {
-        $procedures = $this->createProceduresFromRequest($request);
+        try {
+            $procedures = $this->createProceduresFromRequest($request);
 
-        return $this->createJsonResponse(
-            new JsonSerializableArray([
-                'procedures' => $this->executeProcedures($procedures, false)
-            ])
-        );
+            return $this->createJsonResponse(
+                new JsonSerializableArray([
+                    'procedures' => $this->executeProcedures($procedures, false)
+                ])
+            );
+        } catch (Throwable $throwable) {
+            return $this->createJsonErrorResponse($throwable);
+        }
     }
 
     /**
@@ -207,26 +191,30 @@ class RPCHandler extends AbstractHttpHandler
      */
     public function executeExecuteTransaction(RequestInterface $request): ResponseInterface
     {
-        $procedures = $this->createProceduresFromRequest($request);
+        try {
+            $procedures = $this->createProceduresFromRequest($request);
 
-        $this->transactionManager->startTransaction();
+            $this->transactionManager->startTransaction();
 
-        $results = $this->executeProcedures($procedures, true);
+            $results = $this->executeProcedures($procedures, true);
 
-        if (!$this->transactionManager->isTransactionCanceled()) {
-            try {
-                $this->transactionManager->commitTransaction();
-            } catch (Throwable $throwable) {
-                $this->transactionManager->rollbackTransaction();
+            if (!$this->transactionManager->isTransactionCanceled()) {
+                try {
+                    $this->transactionManager->commitTransaction();
+                } catch (Throwable $throwable) {
+                    $this->transactionManager->rollbackTransaction();
 
-                throw $throwable;
+                    throw $throwable;
+                }
             }
-        }
 
-        return $this->createJsonResponse(
-            new JsonSerializableArray([
-                'procedures' => $results
-            ])
-        );
+            return $this->createJsonResponse(
+                new JsonSerializableArray([
+                    'procedures' => $results
+                ])
+            );
+        } catch (Throwable $throwable) {
+            return $this->createJsonErrorResponse($throwable);
+        }
     }
 }

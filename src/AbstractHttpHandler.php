@@ -2,6 +2,11 @@
 
 namespace Ellinaut\ElliRPC;
 
+use Ellinaut\ElliRPC\Error\Error;
+use Ellinaut\ElliRPC\Error\Factory\ErrorFactoryInterface;
+use Ellinaut\ElliRPC\Error\HttpErrorInterface;
+use Ellinaut\ElliRPC\Error\TranslateableError;
+use Ellinaut\ElliRPC\Error\Translator\ErrorTranslatorInterface;
 use JsonSerializable;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -16,7 +21,9 @@ abstract class AbstractHttpHandler
 {
     public function __construct(
         protected readonly StreamFactoryInterface $streamFactory,
-        protected readonly ResponseFactoryInterface $responseFactory
+        protected readonly ResponseFactoryInterface $responseFactory,
+        protected readonly ErrorFactoryInterface $errorFactory,
+        protected readonly ErrorTranslatorInterface $errorTranslator
     ) {
     }
 
@@ -60,6 +67,28 @@ abstract class AbstractHttpHandler
     }
 
     /**
+     * @param Throwable $throwable
+     * @return Error
+     */
+    protected function createErrorFromThrowable(Throwable $throwable): Error
+    {
+        $error = $this->errorFactory->createFromThrowable($throwable);
+        if (!$error) {
+            $error = new TranslateableError(
+                'en',
+                $throwable->getMessage(),
+                (string)$throwable->getCode()
+            );
+        }
+
+        if ($error instanceof TranslateableError) {
+            $this->errorTranslator->translate($error);
+        }
+
+        return $error;
+    }
+
+    /**
      * @param JsonSerializable $body
      * @param int $status
      * @return ResponseInterface
@@ -74,5 +103,25 @@ abstract class AbstractHttpHandler
                     json_encode($body, JSON_THROW_ON_ERROR)
                 )
             );
+    }
+
+    /**
+     * @param Throwable $throwable
+     * @param int $status
+     * @return ResponseInterface
+     * @throws Throwable
+     */
+    protected function createJsonErrorResponse(Throwable $throwable, int $status = 500): ResponseInterface
+    {
+        $error = $this->createErrorFromThrowable($throwable);
+        if ($error instanceof HttpErrorInterface) {
+            $status = $error->getStatusCode();
+        }
+
+        return $this->responseFactory->createResponse($status)->withBody(
+            $this->streamFactory->createStream(
+                json_encode($error, JSON_THROW_ON_ERROR)
+            )
+        );
     }
 }

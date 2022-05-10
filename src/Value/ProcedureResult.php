@@ -2,6 +2,7 @@
 
 namespace Ellinaut\ElliRPC\Value;
 
+use Ellinaut\ElliRPC\Error\Error;
 use JsonSerializable;
 
 /**

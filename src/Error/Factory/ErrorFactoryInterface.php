@@ -2,7 +2,7 @@
 
 namespace Ellinaut\ElliRPC\Error\Factory;
 
-use Ellinaut\ElliRPC\Value\Error;
+use Ellinaut\ElliRPC\Error\Error;
 use Throwable;
 
 /**

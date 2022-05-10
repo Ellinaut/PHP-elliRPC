@@ -2,7 +2,7 @@
 
 namespace Ellinaut\ElliRPC\Error\Translator;
 
-use Ellinaut\ElliRPC\Value\TranslateableError;
+use Ellinaut\ElliRPC\Error\TranslateableError;
 
 /**
  * @author Philipp Marien

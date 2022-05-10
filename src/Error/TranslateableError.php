@@ -1,6 +1,6 @@
 <?php
 
-namespace Ellinaut\ElliRPC\Value;
+namespace Ellinaut\ElliRPC\Error;
 
 use JsonSerializable;
 
