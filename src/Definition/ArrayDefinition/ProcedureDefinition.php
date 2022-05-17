@@ -30,6 +30,13 @@ class ProcedureDefinition extends AbstractArrayDefinition implements ProcedureDe
         self::validateDefinition($definition, 'response', [TransportDefinition::class, 'validate']);
 
         self::validateListOfStrings($definition, 'errors');
+
+        self::validateString($definition, 'allowedUsage');
+        if (
+            $definition['allowedUsage'] && !in_array($definition['allowedUsage'], ['TRANSACTION', 'STANDALONE'], true)
+        ) {
+            throw new DefinitionException('Value for property "allowedUsage" have to be null, "TRANSACTION" or "STANDALONE"');
+        }
     }
 
     /**
@@ -82,6 +89,14 @@ class ProcedureDefinition extends AbstractArrayDefinition implements ProcedureDe
         return $this->definition['errors'];
     }
 
+    /**
+     * @return string|null
+     */
+    public function getAllowedUsage(): ?string
+    {
+        return $this->definition['allowedUsage'];
+    }
+
 
     /**
      * @throws DefinitionException
@@ -94,6 +109,7 @@ class ProcedureDefinition extends AbstractArrayDefinition implements ProcedureDe
             'request' => $this->getRequestDefinition(),
             'response' => $this->getResponseDefinition(),
             'errors' => $this->getErrors(),
+            'allowedUsage' => $this->getAllowedUsage()
         ];
     }
 }

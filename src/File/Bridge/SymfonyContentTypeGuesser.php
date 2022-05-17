@@ -11,7 +11,7 @@ use Symfony\Component\Mime\MimeTypeGuesserInterface;
 class SymfonyContentTypeGuesser implements ContentTypeGuesserInterface
 {
     public function __construct(
-        private MimeTypeGuesserInterface $mimeTypeGuesser
+        private readonly MimeTypeGuesserInterface $mimeTypeGuesser
     ) {
     }
 

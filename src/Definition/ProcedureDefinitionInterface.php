@@ -31,4 +31,9 @@ interface ProcedureDefinitionInterface extends DefinitionInterface
      * @return string[]
      */
     public function getErrors(): array;
+
+    /**
+     * @return string|null
+     */
+    public function getAllowedUsage(): ?string;
 }

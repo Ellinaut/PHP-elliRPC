@@ -5,6 +5,7 @@ namespace Ellinaut\ElliRPC;
 use Ellinaut\ElliRPC\Error\Factory\ErrorFactoryInterface;
 use Ellinaut\ElliRPC\Error\Translator\ErrorTranslatorInterface;
 use Ellinaut\ElliRPC\Exception\ProcedureValidationException;
+use Ellinaut\ElliRPC\Procedure\ExecutionContext;
 use Ellinaut\ElliRPC\Procedure\Processor\ProcedureProcessorInterface;
 use Ellinaut\ElliRPC\Procedure\Transaction\TransactionManagerInterface;
 use Ellinaut\ElliRPC\Procedure\Validator\ProcedureValidatorInterface;
@@ -38,10 +39,11 @@ class RPCHandler extends AbstractHttpHandler
 
     /**
      * @param array $procedure
+     * @param ExecutionContext $executionContext
      * @return RemoteProcedure
      * @throws ProcedureValidationException
      */
-    protected function createProcedureFromArray(array $procedure): RemoteProcedure
+    protected function createProcedureFromArray(array $procedure, ExecutionContext $executionContext): RemoteProcedure
     {
         if (!array_key_exists('package', $procedure) || !is_string($procedure['package'])) {
             throw new ProcedureValidationException(
@@ -60,14 +62,24 @@ class RPCHandler extends AbstractHttpHandler
                 'Required property "data" is missing or invalid.'
             );
         }
-        $this->procedureValidator->validateData($procedure['package'], $procedure['procedure'], $procedure['data']);
+        $this->procedureValidator->validateData(
+            $executionContext,
+            $procedure['package'],
+            $procedure['procedure'],
+            $procedure['data']
+        );
 
         if (!array_key_exists('meta', $procedure) || (!is_array($procedure['meta']) && !is_null($procedure['meta']))) {
             throw new ProcedureValidationException(
                 'Required property "meta" is missing or invalid.'
             );
         }
-        $this->procedureValidator->validateMeta($procedure['package'], $procedure['procedure'], $procedure['meta']);
+        $this->procedureValidator->validateMeta(
+            $executionContext,
+            $procedure['package'],
+            $procedure['procedure'],
+            $procedure['meta']
+        );
 
         return new RemoteProcedure(
             $procedure['package'],
@@ -79,11 +91,12 @@ class RPCHandler extends AbstractHttpHandler
 
     /**
      * @param RequestInterface $request
+     * @param ExecutionContext $executionContext
      * @return array
      * @throws ProcedureValidationException
      * @throws Throwable
      */
-    protected function createProceduresFromRequest(RequestInterface $request): array
+    protected function createProceduresFromRequest(RequestInterface $request, ExecutionContext $executionContext): array
     {
         $bulkRequest = $this->getDecodedJsonRequestBody($request);
         if (!array_key_exists('procedures', $bulkRequest) || !is_array($bulkRequest['procedures'])) {
@@ -92,7 +105,7 @@ class RPCHandler extends AbstractHttpHandler
 
         $procedures = [];
         foreach ($bulkRequest['procedures'] as $procedure) {
-            $procedures[] = $this->createProcedureFromArray($procedure);
+            $procedures[] = $this->createProcedureFromArray($procedure, $executionContext);
         }
 
         return $procedures;
@@ -100,10 +113,10 @@ class RPCHandler extends AbstractHttpHandler
 
     /**
      * @param RemoteProcedure[] $procedures
-     * @param bool $abortOnError
+     * @param ExecutionContext $executionContext
      * @return BulkProcedureResult[]
      */
-    protected function executeProcedures(array $procedures, bool $abortOnError): array
+    protected function executeProcedures(array $procedures, ExecutionContext $executionContext): array
     {
         $results = [];
         $aborted = false;
@@ -126,7 +139,7 @@ class RPCHandler extends AbstractHttpHandler
             try {
                 $result = new BulkProcedureResult(
                     $procedure,
-                    $this->processor->process($procedure)
+                    $this->processor->process($procedure, $executionContext)
                 );
             } catch (Throwable $throwable) {
                 $result = new BulkProcedureResult(
@@ -134,7 +147,7 @@ class RPCHandler extends AbstractHttpHandler
                     new ProcedureResult(false, null, null, [$this->createErrorFromThrowable($throwable)])
                 );
 
-                if ($abortOnError) {
+                if ($executionContext === ExecutionContext::TRANSACTION) {
                     $aborted = true;
                     $this->transactionManager->cancelTransaction();
                 }
@@ -154,10 +167,10 @@ class RPCHandler extends AbstractHttpHandler
     {
         try {
             $procedureRequest = $this->getDecodedJsonRequestBody($request);
-            $procedure = $this->createProcedureFromArray($procedureRequest);
+            $procedure = $this->createProcedureFromArray($procedureRequest, ExecutionContext::STANDALONE);
 
             return $this->createJsonResponse(
-                $this->processor->process($procedure)
+                $this->processor->process($procedure, ExecutionContext::STANDALONE)
             );
         } catch (Throwable $throwable) {
             return $this->createJsonErrorResponse($throwable);
@@ -172,11 +185,11 @@ class RPCHandler extends AbstractHttpHandler
     public function executeExecuteBulk(RequestInterface $request): ResponseInterface
     {
         try {
-            $procedures = $this->createProceduresFromRequest($request);
+            $procedures = $this->createProceduresFromRequest($request, ExecutionContext::STANDALONE);
 
             return $this->createJsonResponse(
                 new JsonSerializableArray([
-                    'procedures' => $this->executeProcedures($procedures, false)
+                    'procedures' => $this->executeProcedures($procedures, ExecutionContext::STANDALONE)
                 ])
             );
         } catch (Throwable $throwable) {
@@ -192,11 +205,11 @@ class RPCHandler extends AbstractHttpHandler
     public function executeExecuteTransaction(RequestInterface $request): ResponseInterface
     {
         try {
-            $procedures = $this->createProceduresFromRequest($request);
+            $procedures = $this->createProceduresFromRequest($request, ExecutionContext::TRANSACTION);
 
             $this->transactionManager->startTransaction();
 
-            $results = $this->executeProcedures($procedures, true);
+            $results = $this->executeProcedures($procedures, ExecutionContext::TRANSACTION);
 
             if (!$this->transactionManager->isTransactionCanceled()) {
                 try {

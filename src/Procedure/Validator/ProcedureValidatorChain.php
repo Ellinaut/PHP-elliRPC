@@ -3,6 +3,7 @@
 namespace Ellinaut\ElliRPC\Procedure\Validator;
 
 use Ellinaut\ElliRPC\Exception\ProcedureValidationException;
+use Ellinaut\ElliRPC\Procedure\ExecutionContext;
 
 /**
  * @author Philipp Marien
@@ -14,36 +15,44 @@ class ProcedureValidatorChain implements ProcedureValidatorInterface
      */
     private array $validators = [];
 
-    public function register(ProcedureValidatorInterface $validator): void
+    public function register(ProcedureValidatorInterface $validator, ?ExecutionContext $context = null): void
     {
-        $this->validators[] = $validator;
+        if (!$context) {
+            foreach (ExecutionContext::cases() as $validatorContext) {
+                $this->validators[$validatorContext->name] = $validator;
+            }
+        } else {
+            $this->validators[$context->name] = $validator;
+        }
     }
 
     /**
+     * @param ExecutionContext $context
      * @param string $package
      * @param string $procedure
      * @param array|null $data
      * @return void
      * @throws ProcedureValidationException
      */
-    public function validateData(string $package, string $procedure, ?array $data): void
+    public function validateData(ExecutionContext $context, string $package, string $procedure, ?array $data): void
     {
-        foreach ($this->validators as $validator) {
-            $validator->validateData($package, $procedure, $data);
+        foreach ($this->validators[$context->name] as $validator) {
+            $validator->validateData($context, $package, $procedure, $data);
         }
     }
 
     /**
+     * @param ExecutionContext $context
      * @param string $package
      * @param string $procedure
      * @param array|null $meta
      * @return void
      * @throws ProcedureValidationException
      */
-    public function validateMeta(string $package, string $procedure, ?array $meta): void
+    public function validateMeta(ExecutionContext $context, string $package, string $procedure, ?array $meta): void
     {
-        foreach ($this->validators as $validator) {
-            $validator->validateMeta($package, $procedure, $meta);
+        foreach ($this->validators[$context->name] as $validator) {
+            $validator->validateMeta($context, $package, $procedure, $meta);
         }
     }
 }
