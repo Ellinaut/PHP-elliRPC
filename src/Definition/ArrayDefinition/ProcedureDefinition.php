@@ -5,6 +5,7 @@ namespace Ellinaut\ElliRPC\Definition\ArrayDefinition;
 use Ellinaut\ElliRPC\Definition\ProcedureDefinitionInterface;
 use Ellinaut\ElliRPC\Definition\TransportDefinitionInterface;
 use Ellinaut\ElliRPC\Exception\DefinitionException;
+use Ellinaut\ElliRPC\Procedure\ExecutionContext;
 
 /**
  * @author Philipp Marien
@@ -32,8 +33,12 @@ class ProcedureDefinition extends AbstractArrayDefinition implements ProcedureDe
         self::validateListOfStrings($definition, 'errors');
 
         self::validateStringOrNull($definition, 'allowedUsage');
+        $allowedUsageValues = [];
+        foreach (ExecutionContext::cases() as $context) {
+            $allowedUsageValues[] = $context->value;
+        }
         if (
-            $definition['allowedUsage'] && !in_array($definition['allowedUsage'], ['TRANSACTION', 'STANDALONE'], true)
+            $definition['allowedUsage'] && !in_array($definition['allowedUsage'], $allowedUsageValues, true)
         ) {
             throw new DefinitionException('Value for property "allowedUsage" have to be null, "TRANSACTION" or "STANDALONE"');
         }
