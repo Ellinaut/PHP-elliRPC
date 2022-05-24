@@ -36,6 +36,10 @@ class ProcedureValidatorChain implements ProcedureValidatorInterface
      */
     public function validateData(ExecutionContext $context, string $package, string $procedure, ?array $data): void
     {
+        if (!array_key_exists($context->name, $this->validators)) {
+            return;
+        }
+
         foreach ($this->validators[$context->name] as $validator) {
             $validator->validateData($context, $package, $procedure, $data);
         }
@@ -51,6 +55,10 @@ class ProcedureValidatorChain implements ProcedureValidatorInterface
      */
     public function validateMeta(ExecutionContext $context, string $package, string $procedure, ?array $meta): void
     {
+        if (!array_key_exists($context->name, $this->validators)) {
+            return;
+        }
+
         foreach ($this->validators[$context->name] as $validator) {
             $validator->validateMeta($context, $package, $procedure, $meta);
         }
