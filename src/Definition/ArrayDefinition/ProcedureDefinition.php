@@ -31,7 +31,7 @@ class ProcedureDefinition extends AbstractArrayDefinition implements ProcedureDe
 
         self::validateListOfStrings($definition, 'errors');
 
-        self::validateString($definition, 'allowedUsage');
+        self::validateStringOrNull($definition, 'allowedUsage');
         if (
             $definition['allowedUsage'] && !in_array($definition['allowedUsage'], ['TRANSACTION', 'STANDALONE'], true)
         ) {
