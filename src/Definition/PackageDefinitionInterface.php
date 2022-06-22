@@ -18,6 +18,11 @@ interface PackageDefinitionInterface extends DefinitionInterface
     public function getDescription(): ?string;
 
     /**
+     * @return string|null
+     */
+    public function getFallbackLanguage(): ?string;
+
+    /**
      * @return ProcedureDefinitionInterface[]
      */
     public function getProcedureDefinitions(): array;

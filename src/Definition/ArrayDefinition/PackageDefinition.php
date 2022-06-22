@@ -28,6 +28,8 @@ class PackageDefinition extends AbstractArrayDefinition implements PackageDefini
 
         self::validateStringOrNull($definition, 'description');
 
+        self::validateStringOrNull($definition, 'fallbackLanguage');
+
         self::validateDefinitionSet($definition, 'procedures', [ProcedureDefinition::class, 'validate']);
 
         self::validateDefinitionSet($definition, 'schemas', [SchemaDefinition::class, 'validate']);
@@ -49,6 +51,14 @@ class PackageDefinition extends AbstractArrayDefinition implements PackageDefini
     public function getDescription(): ?string
     {
         return $this->definition['description'];
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFallbackLanguage(): ?string
+    {
+        return $this->definition['fallbackLanguage'];
     }
 
     /**
@@ -107,6 +117,7 @@ class PackageDefinition extends AbstractArrayDefinition implements PackageDefini
         return [
             'name' => $this->getName(),
             'description' => $this->getDescription(),
+            'fallbackLanguage' => $this->getFallbackLanguage(),
             'procedures' => $this->getProcedureDefinitions(),
             'schemas' => $this->getSchemaDefinitions(),
             'errors' => $this->getErrorDefinitions(),
