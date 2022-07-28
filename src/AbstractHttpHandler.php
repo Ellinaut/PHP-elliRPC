@@ -70,7 +70,7 @@ abstract class AbstractHttpHandler
      * @param Throwable $throwable
      * @return Error
      */
-    protected function createErrorFromThrowable(Throwable $throwable): Error
+    public function createErrorFromThrowable(Throwable $throwable): Error
     {
         $error = $this->errorFactory->createFromThrowable($throwable);
         if (!$error) {
@@ -94,7 +94,7 @@ abstract class AbstractHttpHandler
      * @return ResponseInterface
      * @throws Throwable
      */
-    protected function createJsonResponse(JsonSerializable $body, int $status = 200): ResponseInterface
+    public function createJsonResponse(JsonSerializable $body, int $status = 200): ResponseInterface
     {
         return $this->responseFactory->createResponse($status)
             ->withHeader('Content-Type', 'application/json')
@@ -111,7 +111,7 @@ abstract class AbstractHttpHandler
      * @return ResponseInterface
      * @throws Throwable
      */
-    protected function createJsonErrorResponse(Throwable $throwable, int $status = 500): ResponseInterface
+    public function createJsonErrorResponse(Throwable $throwable, int $status = 500): ResponseInterface
     {
         $error = $this->createErrorFromThrowable($throwable);
         if ($error instanceof HttpErrorInterface) {
