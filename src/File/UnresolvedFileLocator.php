@@ -5,20 +5,15 @@ namespace Ellinaut\ElliRPC\File;
 /**
  * @author Philipp Marien
  */
-class DefaultFileLocator implements FileLocatorInterface
+class UnresolvedFileLocator implements FileLocatorInterface
 {
-    public function __construct(
-        private readonly string $localBasePath
-    ) {
-    }
-
     /**
      * @param string $storagePath
      * @return string
      */
     public function resolvePublicPath(string $storagePath): string
     {
-        return '/' . ltrim(str_replace($this->localBasePath, '', $storagePath), '/');
+        return $storagePath;
     }
 
     /**
@@ -38,6 +33,6 @@ class DefaultFileLocator implements FileLocatorInterface
      */
     public function resolveStoragePath(string $publicPath): string
     {
-        return rtrim($this->localBasePath, '/') . '/' . ltrim($publicPath, '/');
+        return $publicPath;
     }
 }

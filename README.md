@@ -10,12 +10,12 @@ elliRPC (PHP-Library)
 2. Installation
 3. Register Definitions
 4. Register Processors
-4. Register Transaction Listeners
-5. Register Validators
-6. Register Error Factories
-7. Register Error Translators
-8. Configure File Handling
-9. Handle Requests
+5. Register Transaction Listeners
+6. Register Validators
+7. Register Error Factories
+8. Register Error Translators
+9. Configure File Handling
+10. Handle Requests
 
 ## Introduction
 
@@ -179,13 +179,22 @@ $contentTypeGuesser = new \Ellinaut\ElliRPC\File\Bridge\SymfonyContentTypeGuesse
     new \Symfony\Component\Mime\FileinfoMimeTypeGuesser()
 );
 
-$filesystem = new \Ellinaut\ElliRPC\File\Bridge\SymfonyFilesystem(
+// with symfony filesystem and without custom fiel logic use: 
+$fallbackFilesystem = new \Ellinaut\ElliRPC\File\Bridge\SymfonyFilesystem(
     new \Symfony\Component\Filesystem\Filesystem()
 );
+// to disable file uploads use `\Ellinaut\ElliRPC\File\UnsupportedFilesystem` instead!
 
-$fileLocator = new \Ellinaut\ElliRPC\File\DefaultFileLocator(
+$filesystem = new \Ellinaut\ElliRPC\File\FilesystemChain($fallbackFilesystem);
+// use "filesystem->add" to add custom filesystems which have to implement `\Ellinaut\ElliRPC\File\ChainableFilesystem`
+
+$fallbackFileLocator = new \Ellinaut\ElliRPC\File\LocalBasePathFileLocator(
     __DIR__.'/../files' // local file storage path
 );
+// to use the same values for public and storage paths and disable resolving use `\Ellinaut\ElliRPC\File\UnresolvedFileLocator` instead!
+
+$fileLocator = new \Ellinaut\ElliRPC\File\FileLocatorChain($fallbackFileLocator);
+// use "$fileLocator->add" to add custom file locators which have to implement `\Ellinaut\ElliRPC\File\ChainableFileLocator`
 ```
 
 ## Handle Requests
