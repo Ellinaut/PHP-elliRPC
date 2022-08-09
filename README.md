@@ -188,7 +188,7 @@ $fallbackFilesystem = new \Ellinaut\ElliRPC\File\Bridge\SymfonyFilesystem(
 $filesystem = new \Ellinaut\ElliRPC\File\FilesystemChain($fallbackFilesystem);
 // use "filesystem->add" to add custom filesystems which have to implement `\Ellinaut\ElliRPC\File\ChainableFilesystem`
 
-$fallbackFileLocator = new \Ellinaut\ElliRPC\File\LocalBasePathFileLocator(
+$fallbackFileLocator = new \Ellinaut\ElliRPC\File\LocalPathLocator(
     __DIR__.'/../files' // local file storage path
 );
 // to use the same values for public and storage paths and disable resolving use `\Ellinaut\ElliRPC\File\UnresolvedFileLocator` instead!
