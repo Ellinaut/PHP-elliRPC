@@ -7,5 +7,5 @@ namespace Ellinaut\ElliRPC\File;
  */
 interface ChainableFilesystem extends FilesystemInterface
 {
-    public function supports(string $storagePath): bool;
+    public function supportsStoragePath(string $storagePath): bool;
 }

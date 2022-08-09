@@ -54,7 +54,7 @@ class FilesystemChain implements FilesystemInterface
     protected function selectFilesystem(string $path): FilesystemInterface
     {
         foreach ($this->filesystems as $filesystem) {
-            if ($filesystem->supports($path)) {
+            if ($filesystem->supportsStoragePath($path)) {
                 return $filesystem;
             }
         }
