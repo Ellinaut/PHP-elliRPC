@@ -16,39 +16,39 @@ class SymfonyFilesystem implements FilesystemInterface
     }
 
     /**
-     * @param string $realPath
+     * @param string $storagePath
      * @return SplFileInfo|null
      */
-    public function loadFile(string $realPath): ?SplFileInfo
+    public function loadFile(string $storagePath): ?SplFileInfo
     {
-        if ($this->filesystem->exists($realPath)) {
-            return new SplFileInfo($realPath);
+        if ($this->filesystem->exists($storagePath)) {
+            return new SplFileInfo($storagePath);
         }
 
         return null;
     }
 
     /**
-     * @param string $realPath
+     * @param string $storagePath
      * @param string $content
      * @return void
      */
-    public function storeFile(string $realPath, string $content): void
+    public function storeFile(string $storagePath, string $content): void
     {
-        $exists = $this->filesystem->exists($realPath);
+        $exists = $this->filesystem->exists($storagePath);
         if ($exists) {
-            $this->filesystem->remove($realPath);
+            $this->filesystem->remove($storagePath);
         }
 
-        $this->filesystem->dumpFile($realPath, $content);
+        $this->filesystem->dumpFile($storagePath, $content);
     }
 
     /**
-     * @param string $realPath
+     * @param string $storagePath
      * @return void
      */
-    public function deleteFile(string $realPath): void
+    public function deleteFile(string $storagePath): void
     {
-        $this->filesystem->remove($realPath);
+        $this->filesystem->remove($storagePath);
     }
 }

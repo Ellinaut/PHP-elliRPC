@@ -7,9 +7,9 @@ namespace Ellinaut\ElliRPC\File;
  */
 interface FileLocatorInterface
 {
-    public function resolveRPCPath(string $realPath): string;
+    public function resolvePublicPath(string $storagePath): string;
 
-    public function resolveRPCName(string $realPath): string;
+    public function resolvePublicName(string $storagePath): string;
 
-    public function resolveRealPath(string $rpcPath): string;
+    public function resolveStoragePath(string $publicPath): string;
 }

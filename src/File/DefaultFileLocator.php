@@ -13,31 +13,31 @@ class DefaultFileLocator implements FileLocatorInterface
     }
 
     /**
-     * @param string $realPath
+     * @param string $storagePath
      * @return string
      */
-    public function resolveRPCPath(string $realPath): string
+    public function resolvePublicPath(string $storagePath): string
     {
-        return '/' . ltrim(str_replace($this->localBasePath, '', $realPath), '/');
+        return '/' . ltrim(str_replace($this->localBasePath, '', $storagePath), '/');
     }
 
     /**
-     * @param string $realPath
+     * @param string $storagePath
      * @return string
      */
-    public function resolveRPCName(string $realPath): string
+    public function resolvePublicName(string $storagePath): string
     {
-        $parts = explode('/', $realPath);
+        $parts = explode('/', $storagePath);
 
         return $parts[array_key_last($parts)];
     }
 
     /**
-     * @param string $rpcPath
+     * @param string $publicPath
      * @return string
      */
-    public function resolveRealPath(string $rpcPath): string
+    public function resolveStoragePath(string $publicPath): string
     {
-        return rtrim($this->localBasePath, '/') . '/' . ltrim($rpcPath, '/');
+        return rtrim($this->localBasePath, '/') . '/' . ltrim($publicPath, '/');
     }
 }

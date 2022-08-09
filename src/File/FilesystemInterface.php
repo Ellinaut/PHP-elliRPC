@@ -9,9 +9,9 @@ use SplFileInfo;
  */
 interface FilesystemInterface
 {
-    public function loadFile(string $realPath): ?SplFileInfo;
+    public function loadFile(string $storagePath): ?SplFileInfo;
 
-    public function storeFile(string $realPath, string $content): void;
+    public function storeFile(string $storagePath, string $content): void;
 
-    public function deleteFile(string $realPath): void;
+    public function deleteFile(string $storagePath): void;
 }

@@ -21,6 +21,8 @@ use Throwable;
  */
 class FileHandler extends AbstractHttpHandler
 {
+    private const PATH_SEPARATOR = '/files/';
+
     public function __construct(
         StreamFactoryInterface $streamFactory,
         ResponseFactoryInterface $responseFactory,
@@ -41,11 +43,11 @@ class FileHandler extends AbstractHttpHandler
     public function executeGetFile(RequestInterface $request): ResponseInterface
     {
         try {
-            $realPath = $this->fileLocator->resolveRealPath(
-                $this->getLastPathPart($request, '/files/')
+            $storagePath = $this->fileLocator->resolveStoragePath(
+                $this->getLastPathPart($request, self::PATH_SEPARATOR)
             );
 
-            $file = $this->filesystem->loadFile($realPath);
+            $file = $this->filesystem->loadFile($storagePath);
             if (!$file || !$file->isReadable()) {
                 throw new FileNotFoundException('The requested file could not be found.');
             }
@@ -62,7 +64,7 @@ class FileHandler extends AbstractHttpHandler
                 )
                 ->withHeader(
                     'Content-Disposition',
-                    'inline; filename=' . $this->fileLocator->resolveRPCName($file->getRealPath())
+                    'inline; filename=' . $this->fileLocator->resolvePublicName($file->getRealPath())
                 );
         } catch (Throwable $throwable) {
             return $this->createJsonErrorResponse($throwable);
@@ -77,26 +79,26 @@ class FileHandler extends AbstractHttpHandler
     public function executeUploadFile(ServerRequestInterface $request): ResponseInterface
     {
         try {
-            $rpcPath = $this->getLastPathPart($request, '/files/');
-            $realPath = $this->fileLocator->resolveRealPath($rpcPath);
+            $publicPath = $this->getLastPathPart($request, self::PATH_SEPARATOR);
+            $storagePath = $this->fileLocator->resolveStoragePath($publicPath);
 
             if (strtoupper($request->getMethod()) !== 'PUT') {
-                $file = $this->filesystem->loadFile($realPath);
+                $file = $this->filesystem->loadFile($storagePath);
                 if ($file) {
                     throw new FileExistException('A file with the same filename was already uploaded.');
                 }
             }
 
             $this->filesystem->storeFile(
-                $realPath,
+                $storagePath,
                 $request->getBody()->getContents()
             );
 
             return $this->responseFactory->createResponse(201)
                 ->withHeader(
                     'Location',
-                    $this->getFirstPathPart($request, '/files/')
-                    . '/files' . $this->fileLocator->resolveRPCPath($realPath)
+                    $this->getFirstPathPart($request, self::PATH_SEPARATOR)
+                    . '/files' . $this->fileLocator->resolvePublicPath($storagePath)
                 );
         } catch (Throwable $throwable) {
             return $this->createJsonErrorResponse($throwable);
@@ -111,10 +113,10 @@ class FileHandler extends AbstractHttpHandler
     public function executeDeleteFile(RequestInterface $request): ResponseInterface
     {
         try {
-            $rpcPath = $this->getLastPathPart($request, '/files/');
+            $publicPath = $this->getLastPathPart($request, self::PATH_SEPARATOR);
 
             $this->filesystem->deleteFile(
-                $this->fileLocator->resolveRealPath($rpcPath)
+                $this->fileLocator->resolveStoragePath($publicPath)
             );
 
             return $this->responseFactory->createResponse(204);
